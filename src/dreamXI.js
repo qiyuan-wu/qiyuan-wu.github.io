@@ -25,13 +25,13 @@ export const PLAYERS = [
   // ---- Midfield four (wing-backs + two central) ------------------------
   { id: 'lwb', pos: 'LWB', name: 'Marcelo', image: '/players/marcelo.webp', x: 13, y: 45 },
   { id: 'lcm', pos: 'CM', name: 'Andrés Iniesta', image: '/players/iniesta.webp', x: 39, y: 46 },
-  { id: 'rcm', pos: 'CM', name: '', image: '', x: 61, y: 46 },
+  { id: 'rcm', pos: 'CM', name: 'Kevin De Bruyne', image: '/players/debruyne.webp', x: 61, y: 46 },
   { id: 'rwb', pos: 'RWB', name: '', image: '', x: 87, y: 45 },
 
   // ---- Back three ------------------------------------------------------
   { id: 'lcb', pos: 'LCB', name: 'Theo Hernández', image: '/players/hernandez.webp', x: 27, y: 71 },
   { id: 'cb', pos: 'CB', name: 'Virgil van Dijk', image: '/players/vandijk.webp', x: 50, y: 71 },
-  { id: 'rcb', pos: 'RCB', name: '', image: '', x: 73, y: 71 },
+  { id: 'rcb', pos: 'RCB', name: 'Pepe', image: '/players/pepe.webp', x: 73, y: 71 },
 
   // ---- Goalkeeper ------------------------------------------------------
   { id: 'gk', pos: 'GK', name: 'Guillermo Ochoa', image: '/players/ochoa.webp', x: 50, y: 94 },
