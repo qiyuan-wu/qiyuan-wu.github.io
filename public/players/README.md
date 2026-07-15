@@ -1,29 +1,30 @@
 # Player images
 
-Drop your player cut-out images in this folder, then point to them from
+Each player card on the pitch is one of these image files. Point to them from
 `src/dreamXI.js` using the `image` field.
 
 ## How to use
 
-1. Save an image here, e.g. `public/players/ronaldo.png`.
+1. Save the card image here, e.g. `public/players/ronaldo.webp`.
 2. In `src/dreamXI.js`, set that player's `image` to the path **from the site
    root** (starts with `/players/`, no `public`):
 
    ```js
-   { id: 'st', pos: 'ST', name: 'Cristiano Ronaldo', rating: 91,
-     image: '/players/ronaldo.png', ... }
+   { id: 'rw', pos: 'RW', name: 'Cristiano Ronaldo', image: '/players/ronaldo.webp', x: 78, y: 19 }
    ```
 
-3. Leave `image` as `''` (empty) to keep the generic silhouette placeholder.
+3. Leave `image: ''` to render a dashed "add a player" placeholder instead.
 
 ## Tips
 
-- **Transparent PNGs** (background removed) look best — the player floats on
-  the card like a real FUT card. A plain JPG works too but shows its own
-  rectangular background.
-- Roughly **square or portrait** crops framed on the head/torso sit best in the
-  card's portrait area; the image is centered and scaled to fill.
-- Keep files reasonably small (a few hundred KB) so the page stays fast — these
-  ship as-is to GitHub Pages.
-- Any filename is fine; just match it exactly in `image` (paths are
-  case-sensitive on GitHub Pages).
+- **Transparent background** (WebP or PNG) looks best — the card floats on the
+  pitch. The whole image is shown as the card, so use a clean card cut-out.
+- These render small (~90px wide). Keep files light: **~500px wide WebP** is
+  plenty sharp and only ~60 KB. To shrink a big PNG:
+
+  ```sh
+  cwebp -q 82 -resize 500 0 big.png -o small.webp
+  ```
+
+- Filenames are case-sensitive on GitHub Pages, and spaces/accents can 404 —
+  stick to lowercase ASCII (`vandijk.webp`, not `van Dijk.png`).
