@@ -4,7 +4,7 @@ import { useDocumentTitle } from '../useDocumentTitle.js'
 const SECTIONS = [
   { to: '/games', label: 'Games' },
   { to: '/animals', label: 'Animals' },
-  { to: '/soccer', label: 'Dream XI' },
+  { to: '/soccer', label: 'Most Memorable XI' },
 ]
 
 export default function Home() {
