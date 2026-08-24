@@ -40,7 +40,7 @@ export const PLAYERS = [
 // Seven bench places. Add a name and image exactly as with the starting XI;
 // empty entries render as clean role placeholders in the substitutes list.
 export const SUBSTITUTES = [
-  { id: 'sub-gk', pos: 'GK', name: '', image: '' },
+  { id: 'sub-gk', pos: 'GK', name: 'Iker Casillas', image: '/players/Casillas.png' },
   { id: 'sub-df-1', pos: 'DF', name: '', image: '' },
   { id: 'sub-df-2', pos: 'DF', name: '', image: '' },
   { id: 'sub-mf-1', pos: 'MF', name: 'Kevin De Bruyne', image: '/players/debruyne.webp' },
