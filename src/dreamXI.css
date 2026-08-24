@@ -125,8 +125,10 @@
 }
 
 .bench-list img {
-  object-fit: cover;
-  border-style: solid;
+  height: 64px;
+  object-fit: contain;
+  border: 0;
+  border-radius: 6px;
 }
 
 .bench-name {

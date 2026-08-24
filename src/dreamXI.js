@@ -25,7 +25,7 @@ export const PLAYERS = [
   // ---- Midfield four (wing-backs + two central) ------------------------
   { id: 'lwb', pos: 'LWB', name: 'Marcelo', image: '/players/marcelo.webp', x: 13, y: 45 },
   { id: 'lcm', pos: 'CM', name: 'Andrés Iniesta', image: '/players/iniesta.webp', x: 39, y: 46 },
-  { id: 'rcm', pos: 'CM', name: 'Kevin De Bruyne', image: '/players/debruyne.webp', x: 61, y: 46 },
+  { id: 'rcm', pos: 'CM', name: 'Jude Bellingham', image: '/players/Bellingham.png', x: 61, y: 46 },
   { id: 'rwb', pos: 'RWB', name: '', image: '', x: 87, y: 45 },
 
   // ---- Back three ------------------------------------------------------
@@ -43,7 +43,7 @@ export const SUBSTITUTES = [
   { id: 'sub-gk', pos: 'GK', name: '', image: '' },
   { id: 'sub-df-1', pos: 'DF', name: '', image: '' },
   { id: 'sub-df-2', pos: 'DF', name: '', image: '' },
-  { id: 'sub-mf-1', pos: 'MF', name: '', image: '' },
+  { id: 'sub-mf-1', pos: 'MF', name: 'Kevin De Bruyne', image: '/players/debruyne.webp' },
   { id: 'sub-mf-2', pos: 'MF', name: '', image: '' },
   { id: 'sub-fw-1', pos: 'FW', name: '', image: '' },
   { id: 'sub-fw-2', pos: 'FW', name: '', image: '' },
