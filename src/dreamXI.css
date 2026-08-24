@@ -4,7 +4,7 @@
    ====================================================================== */
 
 .dream-page {
-  --card-w: clamp(58px, 10vw, 128px);
+  --card-w: clamp(50px, 8vw, 104px);
   --grass-a: #2f8f4e;
   --grass-b: #2b8449;
   --line: rgba(255, 255, 255, 0.72);
@@ -22,11 +22,6 @@
   font-size: clamp(2.6rem, 6.5vw, 5.4rem);
   line-height: 0.98;
   letter-spacing: -0.06em;
-}
-
-.dream-heading > p:last-child {
-  margin: 15px 0 0;
-  color: var(--text-dim);
 }
 
 /* ---- Scene / pitch ---------------------------------------------------- */

@@ -18,23 +18,23 @@ export const FORMATION = '3-4-2-1'
 
 export const PLAYERS = [
   // ---- Striker + two inside forwards ----------------------------------
-  { id: 'st', pos: 'ST', name: 'Romelu Lukaku', image: '/players/lukaku.webp', x: 50, y: 13 },
-  { id: 'lam', pos: 'LAM', name: 'Rafael Leão', image: '/players/leao.webp', x: 34, y: 28 },
-  { id: 'ram', pos: 'RAM', name: 'Cristiano Ronaldo', image: '/players/ronaldo.webp', x: 66, y: 28 },
+  { id: 'st', pos: 'ST', name: 'Romelu Lukaku', image: '/players/lukaku.webp', x: 50, y: 7 },
+  { id: 'lam', pos: 'LAM', name: 'Rafael Leão', image: '/players/leao.webp', x: 34, y: 23 },
+  { id: 'ram', pos: 'RAM', name: 'Cristiano Ronaldo', image: '/players/ronaldo.webp', x: 66, y: 23 },
 
   // ---- Midfield four (wing-backs + two central) ------------------------
-  { id: 'lwb', pos: 'LWB', name: 'Marcelo', image: '/players/marcelo.webp', x: 13, y: 48 },
-  { id: 'lcm', pos: 'CM', name: 'Andrés Iniesta', image: '/players/iniesta.webp', x: 38, y: 48 },
-  { id: 'rcm', pos: 'CM', name: 'Kevin De Bruyne', image: '/players/debruyne.webp', x: 62, y: 48 },
-  { id: 'rwb', pos: 'RWB', name: 'Jude Bellingham', image: '/players/Bellingham.png', x: 87, y: 48 },
+  { id: 'lwb', pos: 'LWB', name: 'Marcelo', image: '/players/marcelo.webp', x: 13, y: 50 },
+  { id: 'lcm', pos: 'CM', name: 'Andrés Iniesta', image: '/players/iniesta.webp', x: 38, y: 50 },
+  { id: 'rcm', pos: 'CM', name: 'Kevin De Bruyne', image: '/players/debruyne.webp', x: 62, y: 50 },
+  { id: 'rwb', pos: 'RWB', name: 'Jude Bellingham', image: '/players/Bellingham.png', x: 87, y: 50 },
 
   // ---- Back three ------------------------------------------------------
-  { id: 'lcb', pos: 'LCB', name: 'Theo Hernández', image: '/players/hernandez.webp', x: 27, y: 71 },
-  { id: 'cb', pos: 'CB', name: 'Virgil van Dijk', image: '/players/vandijk.webp', x: 50, y: 71 },
-  { id: 'rcb', pos: 'RCB', name: 'Pepe', image: '/players/pepe.webp', x: 73, y: 71 },
+  { id: 'lcb', pos: 'LCB', name: 'Theo Hernández', image: '/players/hernandez.webp', x: 27, y: 77 },
+  { id: 'cb', pos: 'CB', name: 'Virgil van Dijk', image: '/players/vandijk.webp', x: 50, y: 77 },
+  { id: 'rcb', pos: 'RCB', name: 'Pepe', image: '/players/pepe.webp', x: 73, y: 77 },
 
   // ---- Goalkeeper ------------------------------------------------------
-  { id: 'gk', pos: 'GK', name: 'Guillermo Ochoa', image: '/players/ochoa.webp', x: 50, y: 94 },
+  { id: 'gk', pos: 'GK', name: 'Guillermo Ochoa', image: '/players/ochoa.webp', x: 50, y: 99 },
 ]
 
 // Seven bench places. Add a name and image exactly as with the starting XI;

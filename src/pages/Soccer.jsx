@@ -11,7 +11,6 @@ export default function Soccer() {
       <div className="dream-heading">
         <p className="page-eyebrow">Formation · {FORMATION}</p>
         <h1>Most Memorable XI</h1>
-        <p>Not necessarily the best. The players I remember most.</p>
       </div>
 
       <Pitch />

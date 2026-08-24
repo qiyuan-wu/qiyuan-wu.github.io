@@ -9,7 +9,6 @@ export default function Games() {
       <div className="games-heading">
         <p className="page-eyebrow">Played & remembered</p>
         <h1>Games</h1>
-        <p>Worlds I keep finding my way back to.</p>
       </div>
       <BannerGallery />
     </section>

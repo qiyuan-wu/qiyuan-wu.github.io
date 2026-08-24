@@ -128,13 +128,6 @@
   letter-spacing: -0.07em;
 }
 
-.home-heading > p:last-child {
-  max-width: 42ch;
-  margin: 22px 0 0;
-  color: var(--text-dim);
-  font-size: clamp(1rem, 2vw, 1.18rem);
-}
-
 .home-intro h1 {
   margin: 0 0 12px;
   font-size: clamp(2rem, 5vw, 3rem);
@@ -232,11 +225,6 @@
   font-size: clamp(2.8rem, 7vw, 5.5rem);
   line-height: 0.95;
   letter-spacing: -0.06em;
-}
-
-.games-heading > p:last-child {
-  margin: 14px 0 0;
-  color: var(--text-dim);
 }
 
 .gallery {
@@ -475,12 +463,6 @@ body.has-dialog {
   font-size: clamp(2.6rem, 7vw, 5.8rem);
   line-height: 0.98;
   letter-spacing: -0.06em;
-}
-
-.albums-heading > p:last-child {
-  margin: 18px 0 0;
-  color: var(--text-dim);
-  font-size: 1.05rem;
 }
 
 .albums-eyebrow {

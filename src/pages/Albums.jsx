@@ -3,6 +3,7 @@ import { ALBUMS } from '../albums.js'
 import { useDocumentTitle } from '../useDocumentTitle.js'
 
 const STORAGE_KEY = 'qw-liked-album-tracks'
+const CHRONOLOGICAL_ALBUMS = [...ALBUMS].sort((a, b) => a.year - b.year)
 
 function AlbumCover({ album, large = false }) {
   if (album.cover) {
@@ -71,12 +72,11 @@ export default function Albums() {
       <div className="albums-heading">
         <p className="albums-eyebrow">On repeat</p>
         <h1>Favorite albums</h1>
-        <p>Pull a record from the shelf to see what’s inside.</p>
       </div>
 
       <div className="record-shelf">
         <div className="record-row">
-          {ALBUMS.map((album) => (
+          {CHRONOLOGICAL_ALBUMS.map((album) => (
             <button
               className="record"
               key={album.id}

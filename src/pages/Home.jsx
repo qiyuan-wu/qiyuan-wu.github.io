@@ -15,7 +15,6 @@ export default function Home() {
       <div className="home-heading">
         <p className="page-eyebrow">Personal archive</p>
         <h1>Qiyuan Wu</h1>
-        <p>A small collection of the things that stay with me.</p>
       </div>
 
       <div className="home-cards">
