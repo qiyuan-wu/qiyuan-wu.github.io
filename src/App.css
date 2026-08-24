@@ -692,8 +692,19 @@ body.has-dialog {
 }
 
 .track-name {
+  display: grid;
   padding: 8px 10px 8px 0;
   font-size: 0.92rem;
+}
+
+.track-name small {
+  margin-top: 1px;
+  color: var(--text-dim);
+  font-size: 0.72rem;
+}
+
+.is-liked .track-name small {
+  color: #b6a978;
 }
 
 .track-like {

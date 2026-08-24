@@ -131,14 +131,18 @@ export default function Albums() {
               <ol className="track-list">
                 {openAlbum.tracks.map((track, index) => {
                   const liked = Boolean(likes[`${openAlbum.id}:${index}`])
+                  const trackTitle = typeof track === 'string' ? track : track.title
                   return (
-                    <li className={liked ? 'is-liked' : ''} key={`${track}-${index}`}>
+                    <li className={liked ? 'is-liked' : ''} key={`${trackTitle}-${index}`}>
                       <span className="track-number">{String(index + 1).padStart(2, '0')}</span>
-                      <span className="track-name">{track}</span>
+                      <span className="track-name">
+                        <span>{trackTitle}</span>
+                        {typeof track !== 'string' && <small>{track.artist}</small>}
+                      </span>
                       <button
                         type="button"
                         className="track-like"
-                        aria-label={`${liked ? 'Unmark' : 'Mark'} ${track} as a favorite`}
+                        aria-label={`${liked ? 'Unmark' : 'Mark'} ${trackTitle} as a favorite`}
                         aria-pressed={liked}
                         onClick={() => toggleTrack(openAlbum.id, index)}
                       >
