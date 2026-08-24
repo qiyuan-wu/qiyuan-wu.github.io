@@ -7,7 +7,7 @@ export const ALBUMS = [
     artist: '花儿乐队',
     year: 1999,
     edition: '新蜂音乐 · CD',
-    cover: null,
+    cover: '/albums/xingfu-de-pangbian.jpg',
     accent: '#e63946',
     tracks: [
       '轰隆隆',
