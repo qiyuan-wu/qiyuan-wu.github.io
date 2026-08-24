@@ -4,7 +4,7 @@
    ====================================================================== */
 
 .dream-page {
-  --card-w: clamp(52px, 8vw, 104px);
+  --card-w: clamp(58px, 10vw, 128px);
   --grass-a: #2f8f4e;
   --grass-b: #2b8449;
   --line: rgba(255, 255, 255, 0.72);
@@ -125,7 +125,9 @@
 }
 
 .bench-list img {
-  height: 64px;
+  width: 76px;
+  height: 102px;
+  margin: 4px 0 8px;
   object-fit: contain;
   border: 0;
   border-radius: 6px;
