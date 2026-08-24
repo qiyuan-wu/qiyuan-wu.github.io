@@ -5,8 +5,7 @@ import { NavLink, Outlet } from 'react-router-dom'
 const SECTIONS = [
   { to: '/albums', label: 'Albums' },
   { to: '/games', label: 'Games' },
-  { to: '/animals', label: 'Animals' },
-  { to: '/soccer', label: 'Most Memorable XI' },
+  { to: '/soccer', label: 'Soccer' },
 ]
 
 export default function Layout() {
