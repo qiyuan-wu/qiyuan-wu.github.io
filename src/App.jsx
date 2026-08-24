@@ -4,6 +4,7 @@ import Home from './pages/Home.jsx'
 import Games from './pages/Games.jsx'
 import Animals from './pages/Animals.jsx'
 import Soccer from './pages/Soccer.jsx'
+import Albums from './pages/Albums.jsx'
 import NotFound from './pages/NotFound.jsx'
 import './App.css'
 
@@ -15,6 +16,7 @@ export default function App() {
         <Route path="games" element={<Games />} />
         <Route path="animals" element={<Animals />} />
         <Route path="soccer" element={<Soccer />} />
+        <Route path="albums" element={<Albums />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

@@ -3,6 +3,7 @@ import { NavLink, Outlet } from 'react-router-dom'
 // Section links live here so adding a page later is one entry. `end` on the
 // home link keeps it from staying active on every route.
 const SECTIONS = [
+  { to: '/albums', label: 'Albums' },
   { to: '/games', label: 'Games' },
   { to: '/animals', label: 'Animals' },
   { to: '/soccer', label: 'Most Memorable XI' },
