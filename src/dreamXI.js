@@ -14,19 +14,19 @@
 //             y = 0 (attacking third) → 100 (own goal / GK)
 //           So low y = up the pitch (forwards), high y = deep (keeper).
 
-export const FORMATION = '3-4-3'
+export const FORMATION = '3-4-2-1'
 
 export const PLAYERS = [
-  // ---- Front three -----------------------------------------------------
-  { id: 'lw', pos: 'LW', name: 'Rafael Leão', image: '/players/leao.webp', x: 22, y: 19 },
+  // ---- Striker + two inside forwards ----------------------------------
   { id: 'st', pos: 'ST', name: 'Romelu Lukaku', image: '/players/lukaku.webp', x: 50, y: 13 },
-  { id: 'rw', pos: 'RW', name: 'Cristiano Ronaldo', image: '/players/ronaldo.webp', x: 78, y: 19 },
+  { id: 'lam', pos: 'LAM', name: 'Rafael Leão', image: '/players/leao.webp', x: 34, y: 28 },
+  { id: 'ram', pos: 'RAM', name: 'Cristiano Ronaldo', image: '/players/ronaldo.webp', x: 66, y: 28 },
 
   // ---- Midfield four (wing-backs + two central) ------------------------
-  { id: 'lwb', pos: 'LWB', name: 'Marcelo', image: '/players/marcelo.webp', x: 13, y: 45 },
-  { id: 'lcm', pos: 'CM', name: 'Andrés Iniesta', image: '/players/iniesta.webp', x: 39, y: 46 },
-  { id: 'rcm', pos: 'CM', name: 'Jude Bellingham', image: '/players/Bellingham.png', x: 61, y: 46 },
-  { id: 'rwb', pos: 'RWB', name: '', image: '', x: 87, y: 45 },
+  { id: 'lwb', pos: 'LWB', name: 'Marcelo', image: '/players/marcelo.webp', x: 13, y: 48 },
+  { id: 'lcm', pos: 'CM', name: 'Andrés Iniesta', image: '/players/iniesta.webp', x: 38, y: 48 },
+  { id: 'rcm', pos: 'CM', name: 'Kevin De Bruyne', image: '/players/debruyne.webp', x: 62, y: 48 },
+  { id: 'rwb', pos: 'RWB', name: 'Jude Bellingham', image: '/players/Bellingham.png', x: 87, y: 48 },
 
   // ---- Back three ------------------------------------------------------
   { id: 'lcb', pos: 'LCB', name: 'Theo Hernández', image: '/players/hernandez.webp', x: 27, y: 71 },
@@ -43,7 +43,7 @@ export const SUBSTITUTES = [
   { id: 'sub-gk', pos: 'GK', name: 'Iker Casillas', image: '/players/Casillas.png' },
   { id: 'sub-df-1', pos: 'DF', name: '', image: '' },
   { id: 'sub-df-2', pos: 'DF', name: '', image: '' },
-  { id: 'sub-mf-1', pos: 'MF', name: 'Kevin De Bruyne', image: '/players/debruyne.webp' },
+  { id: 'sub-mf-1', pos: 'MF', name: '', image: '' },
   { id: 'sub-mf-2', pos: 'MF', name: '', image: '' },
   { id: 'sub-fw-1', pos: 'FW', name: '', image: '' },
   { id: 'sub-fw-2', pos: 'FW', name: '', image: '' },
