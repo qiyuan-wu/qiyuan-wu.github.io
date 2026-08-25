@@ -533,11 +533,13 @@ body.has-dialog {
 
 .record-info strong {
   font-size: 1.05rem;
+  line-height: 1.4;
 }
 
 .record-info span {
   color: var(--text-dim);
   font-size: 0.88rem;
+  line-height: 1.4;
 }
 
 .shelf-edge {
