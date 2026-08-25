@@ -71,7 +71,7 @@ export default function Albums() {
     <section className="page-section albums-page">
       <div className="albums-heading">
         <p className="albums-eyebrow">On repeat</p>
-        <h1>Favorite albums + compilations</h1>
+        <h1>Albums + comps</h1>
       </div>
 
       <div className="record-shelf">
