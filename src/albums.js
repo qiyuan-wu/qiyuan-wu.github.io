@@ -420,7 +420,8 @@ export const ALBUMS = [
     artist: '朴树',
     year: 2017,
     edition: '五大唱片 · CD',
-    accent: '#2f3b57',
+    cover: '/albums/liehu-xingzuo.jpg',
+    accent: '#2e8a7d',
     tracks: [
       '空帆船',
       'Never Knows Tomorrow',
