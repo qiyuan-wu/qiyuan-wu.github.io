@@ -23,8 +23,8 @@ function AlbumCover({ album, large = false }) {
       aria-label={`${album.title} by ${album.artist}; cover artwork coming soon`}
       role="img"
     >
-      <span className="cover-band-name">THE FLOWERS</span>
-      <span className="cover-mark">花</span>
+      <span className="cover-band-name">{album.artist}</span>
+      <span className="cover-mark">{album.title.slice(0, 1)}</span>
       <span className="cover-title">{album.title}</span>
       <span className="cover-year">{album.year}</span>
     </div>
