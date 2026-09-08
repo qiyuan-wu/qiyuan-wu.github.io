@@ -858,3 +858,338 @@ body.has-dialog {
     transition: none;
   }
 }
+
+/* ---- Tree of life ----------------------------------------------------- */
+
+.tree-page .section-sub {
+  max-width: 60ch;
+  margin: 0 auto;
+}
+
+.tree-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.tree-toolbar button.is-on {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.tree-hint,
+.tree-status,
+.tree-empty {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+/* The drawing is as wide as the tree is deep, so let it scroll inside its own
+   box rather than pushing the page sideways. */
+.tree-canvas {
+  overflow-x: auto;
+  padding: 8px 0 20px;
+}
+
+.tree-svg {
+  display: block;
+  margin: 0 auto;
+}
+
+.tree-edge path {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 1.5;
+  stroke-linecap: square;
+}
+
+.tree-dot {
+  fill: var(--border);
+}
+
+.tree-tip .tree-dot {
+  fill: var(--accent);
+}
+
+.tree-tip-name {
+  fill: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tree-tip-sci {
+  fill: var(--text-dim);
+  font-size: 11.5px;
+  font-style: italic;
+}
+
+.tree-folded-name {
+  fill: var(--text);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.tree-clade {
+  fill: var(--text-dim);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.tree-count {
+  fill: var(--text-dim);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.tree-triangle {
+  fill: var(--surface-hover);
+  stroke: var(--border);
+  stroke-width: 1.5;
+}
+
+.tree-branch,
+.tree-folded {
+  cursor: pointer;
+}
+
+.tree-hit {
+  fill: transparent;
+}
+
+.tree-branch:hover .tree-dot,
+.tree-branch:focus-visible .tree-dot,
+.tree-branch.is-active .tree-dot {
+  fill: var(--accent);
+}
+
+.tree-branch:hover .tree-clade,
+.tree-branch:focus-visible .tree-clade,
+.tree-branch.is-active .tree-folded-name {
+  fill: var(--text);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.tree-clade {
+  fill: var(--text);
+}
+
+.tree-folded:hover .tree-triangle,
+.tree-folded:focus-visible .tree-triangle {
+  stroke: var(--accent);
+}
+
+.tree-branch:focus,
+.tree-folded:focus {
+  outline: none;
+}
+
+/* Narrow screens get the same tree as an indented list. */
+.tree-list ul {
+  list-style: none;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.tree-list > ul {
+  padding-left: 0;
+}
+
+.tree-list li {
+  border-left: 1px solid var(--border);
+  padding-left: 12px;
+}
+
+.tree-list > ul > li {
+  border-left: 0;
+  padding-left: 0;
+}
+
+.tree-list-clade {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 0;
+  background: none;
+  border: 0;
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tree-list-clade:hover,
+.tree-list-clade.is-active {
+  color: var(--text);
+}
+
+.tree-list-caret {
+  width: 10px;
+  color: var(--accent);
+}
+
+.tree-list-tip {
+  padding: 6px 0 6px 12px;
+}
+
+.tree-list-common {
+  display: block;
+  font-weight: 600;
+}
+
+.tree-list-sci {
+  display: block;
+  color: var(--text-dim);
+  font-size: 0.84rem;
+  font-style: italic;
+}
+
+/* ---- Tree editor (owner only) ---------------------------------------- */
+
+.tree-editor {
+  display: grid;
+  gap: 16px;
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.tree-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+
+.tree-panel h2 {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+
+.tree-panel-sub {
+  margin: -4px 0 12px;
+  color: var(--text-dim);
+  font-size: 0.86rem;
+}
+
+.tree-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tree-row input {
+  flex: 1 1 220px;
+  min-width: 0;
+  padding: 8px 11px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font: inherit;
+}
+
+.tree-row input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.tree-editor button {
+  padding: 8px 13px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-dim);
+  font: inherit;
+  cursor: pointer;
+}
+
+.tree-editor button:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.tree-editor button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.tree-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.tree-chips button {
+  padding: 5px 10px;
+  font-size: 0.82rem;
+}
+
+.tree-matches,
+.tree-species {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.tree-matches button {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+}
+
+.tree-matches button.is-on {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.tree-matches em {
+  font-style: italic;
+  color: var(--text);
+}
+
+.tree-matches span {
+  color: var(--text-dim);
+  font-size: 0.82rem;
+}
+
+.tree-species li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.tree-species li:last-child {
+  border-bottom: 0;
+}
+
+.tree-species em {
+  display: block;
+  color: var(--text-dim);
+  font-size: 0.84rem;
+  font-style: italic;
+}
+
+.tree-species button {
+  padding: 2px 10px;
+  line-height: 1.4;
+}

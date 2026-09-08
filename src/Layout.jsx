@@ -6,6 +6,7 @@ const SECTIONS = [
   { to: '/albums', label: 'Albums' },
   { to: '/games', label: 'Games' },
   { to: '/soccer', label: 'Soccer' },
+  { to: '/tree', label: 'Tree' },
 ]
 
 export default function Layout() {
