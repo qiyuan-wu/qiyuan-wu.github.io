@@ -14,9 +14,9 @@ const firebaseConfig = {
   appId: '1:788369323838:web:9f31ed50df504cd5bd9e6f',
 }
 
-// Fill in once you've signed in at /admin — it only tightens the UI. The rules
-// on the server are what actually keep other people out.
-export const OWNER_UID = ''
+// Mirrors the Firestore rule. This only tightens the UI; the rule on the
+// server is what actually keeps other people out.
+export const OWNER_UID = 'WA4dhJRtX5dFdXX5Ay0CLjmIeuu2'
 
 const app = initializeApp(firebaseConfig)
 export const auth = getAuth(app)
