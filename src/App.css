@@ -773,6 +773,41 @@ body.has-dialog {
   color: var(--rank);
 }
 
+/* Visitors get the heart without the affordance: same slot, no hover, no click. */
+.track-like.is-static {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--rank);
+  cursor: default;
+}
+
+.admin-page code {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #22262e;
+  font-size: 0.9em;
+}
+
+.admin-page button {
+  padding: 8px 14px;
+  border: 1px solid #3a4049;
+  border-radius: 6px;
+  background: #22262e;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.admin-status {
+  color: #9aa3b0;
+}
+
 @keyframes album-fade {
   from { opacity: 0; }
 }

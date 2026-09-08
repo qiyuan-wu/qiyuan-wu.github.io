@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { ALBUMS } from '../albums.js'
+import { useLikes } from '../useLikes.js'
 import { useDocumentTitle } from '../useDocumentTitle.js'
 
-const STORAGE_KEY = 'qw-liked-album-tracks'
 const CHRONOLOGICAL_ALBUMS = [...ALBUMS].sort((a, b) => a.year - b.year)
 
 function AlbumCover({ album, large = false }) {
@@ -31,22 +31,10 @@ function AlbumCover({ album, large = false }) {
   )
 }
 
-function readLikes() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) ?? {}
-  } catch {
-    return {}
-  }
-}
-
 export default function Albums() {
   useDocumentTitle('Albums · Qiyuan Wu')
   const [openAlbum, setOpenAlbum] = useState(null)
-  const [likes, setLikes] = useState(readLikes)
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(likes))
-  }, [likes])
+  const { likes, canEdit, toggle } = useLikes()
 
   useEffect(() => {
     if (!openAlbum) return undefined
@@ -61,11 +49,6 @@ export default function Albums() {
       document.body.classList.remove('has-dialog')
     }
   }, [openAlbum])
-
-  const toggleTrack = (albumId, index) => {
-    const key = `${albumId}:${index}`
-    setLikes((current) => ({ ...current, [key]: !current[key] }))
-  }
 
   return (
     <section className="page-section albums-page">
@@ -139,15 +122,26 @@ export default function Albums() {
                         <span>{trackTitle}</span>
                         {typeof track !== 'string' && <small>{track.artist}</small>}
                       </span>
-                      <button
-                        type="button"
-                        className="track-like"
-                        aria-label={`${liked ? 'Unmark' : 'Mark'} ${trackTitle} as a favorite`}
-                        aria-pressed={liked}
-                        onClick={() => toggleTrack(openAlbum.id, index)}
-                      >
-                        {liked ? '♥' : '♡'}
-                      </button>
+                      {canEdit ? (
+                        <button
+                          type="button"
+                          className="track-like"
+                          aria-label={`${liked ? 'Unmark' : 'Mark'} ${trackTitle} as a favorite`}
+                          aria-pressed={liked}
+                          onClick={() => toggle(openAlbum.id, index)}
+                        >
+                          {liked ? '♥' : '♡'}
+                        </button>
+                      ) : (
+                        <span
+                          className="track-like is-static"
+                          aria-label={liked ? `${trackTitle} is a favorite` : undefined}
+                          role={liked ? 'img' : undefined}
+                          aria-hidden={liked ? undefined : 'true'}
+                        >
+                          {liked ? '♥' : ''}
+                        </span>
+                      )}
                     </li>
                   )
                 })}

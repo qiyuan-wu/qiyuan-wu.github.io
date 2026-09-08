@@ -3,3 +3,6 @@ dist
 *.local
 .DS_Store
 .vite
+
+# Scratch space for content migration (Google Sites export, etc.) — never shipped
+_import/
