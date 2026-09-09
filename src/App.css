@@ -191,6 +191,8 @@
 .home-card-blurb {
   color: var(--text-dim);
   font-size: 0.92rem;
+  /* Always two lines tall, so labels line up whether the blurb wraps or not. */
+  min-height: 3em;
 }
 
 .home-card-arrow {
