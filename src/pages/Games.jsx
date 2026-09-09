@@ -9,7 +9,6 @@ export default function Games() {
   return (
     <section className="page-section games-page">
       <div className="games-heading">
-        <p className="page-eyebrow">{t('games.eyebrow')}</p>
         <h1>{t('games.title')}</h1>
       </div>
       <BannerGallery />

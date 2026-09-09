@@ -55,7 +55,6 @@ export default function Albums() {
   return (
     <section className="page-section albums-page">
       <div className="albums-heading">
-        <p className="albums-eyebrow">{t('albums.eyebrow')}</p>
         <h1>{t('albums.title')}</h1>
       </div>
 

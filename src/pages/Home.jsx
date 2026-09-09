@@ -16,7 +16,6 @@ export default function Home() {
   return (
     <section className="home">
       <div className="home-heading">
-        <p className="page-eyebrow">{t('home.eyebrow')}</p>
         <h1>{t('site.name')}</h1>
       </div>
 

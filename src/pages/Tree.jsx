@@ -457,7 +457,6 @@ export default function Tree() {
   return (
     <section className="page-section tree-page">
       <div className="section-head">
-        <p className="page-eyebrow">{t('tree.eyebrow')}</p>
         <h1>{t('tree.title')}</h1>
       </div>
 

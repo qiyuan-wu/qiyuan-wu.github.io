@@ -1,5 +1,5 @@
 import Pitch from '../Pitch.jsx'
-import { FORMATION, SUBSTITUTES } from '../dreamXI.js'
+import { SUBSTITUTES } from '../dreamXI.js'
 import { useDocumentTitle } from '../useDocumentTitle.js'
 import { useLanguage } from '../i18n.jsx'
 import '../dreamXI.css'
@@ -11,7 +11,6 @@ export default function Soccer() {
   return (
     <section className="page-section dream-page">
       <div className="dream-heading">
-        <p className="page-eyebrow">{t('soccer.formation')} · {FORMATION}</p>
         <h1>{t('soccer.title')}</h1>
       </div>
 
@@ -19,10 +18,7 @@ export default function Soccer() {
 
       <section className="bench" aria-labelledby="bench-title">
         <div className="bench-head">
-          <div>
-            <p className="page-eyebrow">{t('soccer.squad')}</p>
-            <h2 id="bench-title">{t('soccer.subs')}</h2>
-          </div>
+          <h2 id="bench-title">{t('soccer.subs')}</h2>
           <span>{t('soccer.places', { n: SUBSTITUTES.length })}</span>
         </div>
 
