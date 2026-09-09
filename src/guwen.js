@@ -138,8 +138,8 @@ export const PERIODS = [
   },
   {
     id: 'suitang',
-    name: '隋唐',
-    span: '581—907',
+    name: '隋唐五代',
+    span: '581—979',
     authors: [
       {
         name: '王勃',
@@ -230,12 +230,6 @@ export const PERIODS = [
         ],
       },
     ],
-  },
-  {
-    id: 'wudai',
-    name: '五代十国',
-    span: '907—979',
-    authors: [],
   },
   {
     id: 'song',
