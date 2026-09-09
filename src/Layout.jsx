@@ -1,19 +1,14 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { INTERESTS, isInterestPath } from './interests.js'
 import { useLanguage } from './i18n.jsx'
 
-// Section links live here so adding a page later is one entry. `end` on the
-// home link keeps it from staying active on every route.
-const SECTIONS = [
-  { to: '/projects', label: 'nav.projects' },
-  { to: '/guwen', label: 'nav.guwen' },
-  { to: '/albums', label: 'nav.albums' },
-  { to: '/games', label: 'nav.games' },
-  { to: '/soccer', label: 'nav.soccer' },
-  { to: '/tree', label: 'nav.tree' },
-]
-
+// The nav is two entries: the front page (bio, CV, research) and Interests.
+// Inside Interests a second row lists its pages, so hopping between 古文 and
+// the albums is still one click.
 export default function Layout() {
   const { lang, setLang, t } = useLanguage()
+  const { pathname } = useLocation()
+  const inInterests = isInterestPath(pathname)
 
   return (
     <div className="site">
@@ -22,11 +17,12 @@ export default function Layout() {
           吴
         </NavLink>
         <nav className="site-links">
-          {SECTIONS.map((s) => (
-            <NavLink key={s.to} to={s.to}>
-              {t(s.label)}
-            </NavLink>
-          ))}
+          <NavLink to="/" end>
+            {t('nav.home')}
+          </NavLink>
+          <NavLink to="/interests" className={inInterests ? 'active' : undefined}>
+            {t('nav.interests')}
+          </NavLink>
           <button
             type="button"
             className="lang-toggle"
@@ -37,6 +33,16 @@ export default function Layout() {
           </button>
         </nav>
       </header>
+
+      {inInterests && (
+        <nav className="sub-links" aria-label={t('nav.interests')}>
+          {INTERESTS.map((s) => (
+            <NavLink key={s.to} to={s.to}>
+              {t(s.label)}
+            </NavLink>
+          ))}
+        </nav>
+      )}
 
       <main className="site-main">
         <Outlet />

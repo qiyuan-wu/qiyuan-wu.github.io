@@ -6,6 +6,7 @@ import Soccer from './pages/Soccer.jsx'
 import Albums from './pages/Albums.jsx'
 import Tree from './pages/Tree.jsx'
 import Projects from './pages/Projects.jsx'
+import Interests from './pages/Interests.jsx'
 import Guwen from './pages/Guwen.jsx'
 import Admin from './pages/Admin.jsx'
 import NotFound from './pages/NotFound.jsx'
@@ -16,6 +17,7 @@ export default function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Home />} />
+        <Route path="interests" element={<Interests />} />
         <Route path="games" element={<Games />} />
         <Route path="soccer" element={<Soccer />} />
         <Route path="albums" element={<Albums />} />

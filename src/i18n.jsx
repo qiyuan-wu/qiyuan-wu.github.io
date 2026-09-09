@@ -6,7 +6,9 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 const STRINGS = {
   en: {
     'site.name': 'Qiyuan Wu',
-    'nav.projects': 'Projects',
+    'nav.home': 'Research',
+    'nav.interests': 'Interests',
+    'nav.projects': 'Old projects',
     'nav.guwen': '古文',
     'nav.albums': 'Albums',
     'nav.games': 'Games',
@@ -16,9 +18,16 @@ const STRINGS = {
     'nav.switchLabel': 'Switch to Chinese',
 
 
-    'projects.title': 'Projects',
+    'projects.title': 'Old projects',
+    'projects.sub': 'Robots and other things built before university.',
+    'interests.sub': 'The rest of the site: what I read, listen to, play, and follow.',
     'cv.pdf': 'Download CV',
-    'home.more': 'Elsewhere',
+    'cv.research': 'Research',
+    'cv.education': 'Education',
+    'cv.presentations': 'Presentations',
+    'cv.awards': 'Awards',
+    'cv.activities': 'Activities',
+    'home.interests': 'Interests',
 
     // DRAFT — written from the CV as a placeholder until the real one arrives.
     'bio.role': 'Ph.D. student in Mechanical Engineering, Caltech · from 2026',
@@ -49,7 +58,9 @@ const STRINGS = {
   },
   zh: {
     'site.name': '吴其远',
-    'nav.projects': '项目',
+    'nav.home': '研究',
+    'nav.interests': '兴趣',
+    'nav.projects': '旧项目',
     'nav.guwen': '古文',
     'nav.albums': '唱片',
     'nav.games': '游戏',
@@ -59,9 +70,16 @@ const STRINGS = {
     'nav.switchLabel': '切换到英文',
 
 
-    'projects.title': '项目',
+    'projects.title': '旧项目',
+    'projects.sub': '上大学之前做的机器人和其他东西。',
+    'interests.sub': '网站的其余部分：读的、听的、玩的、看的。',
     'cv.pdf': '下载简历',
-    'home.more': '其他',
+    'cv.research': '研究',
+    'cv.education': '教育',
+    'cv.presentations': '报告',
+    'cv.awards': '奖项',
+    'cv.activities': '活动',
+    'home.interests': '兴趣',
 
     // 草稿 — 由简历改写的占位文字，等正式版。
     'bio.role': '加州理工学院 机械工程博士生 · 2026 年起',
