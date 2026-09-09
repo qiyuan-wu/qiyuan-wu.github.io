@@ -14,10 +14,6 @@ const STRINGS = {
     'nav.switchLabel': 'Switch to Chinese',
 
     'home.eyebrow': 'Personal archive',
-    'home.albums': 'Records on permanent rotation',
-    'home.games': 'Favorite worlds and adventures',
-    'home.soccer': 'The players I remember most',
-    'home.tree': 'Species I know, by how they are related',
 
     'albums.title': 'Albums + comps',
     'albums.eyebrow': 'On repeat',
@@ -54,10 +50,6 @@ const STRINGS = {
     'nav.switchLabel': '切换到英文',
 
     'home.eyebrow': '个人存档',
-    'home.albums': '常听不厌的唱片',
-    'home.games': '喜爱的世界与冒险',
-    'home.soccer': '印象最深的球员',
-    'home.tree': '我认识的物种，按亲缘关系排列',
 
     'albums.title': '专辑与合辑',
     'albums.eyebrow': '循环播放',

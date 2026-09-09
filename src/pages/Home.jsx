@@ -3,10 +3,10 @@ import { useDocumentTitle } from '../useDocumentTitle.js'
 import { useLanguage } from '../i18n.jsx'
 
 const SECTIONS = [
-  { to: '/albums', label: 'nav.albums', blurb: 'home.albums' },
-  { to: '/games', label: 'nav.games', blurb: 'home.games' },
-  { to: '/soccer', label: 'nav.soccer', blurb: 'home.soccer' },
-  { to: '/tree', label: 'nav.tree', blurb: 'home.tree' },
+  { to: '/albums', label: 'nav.albums' },
+  { to: '/games', label: 'nav.games' },
+  { to: '/soccer', label: 'nav.soccer' },
+  { to: '/tree', label: 'nav.tree' },
 ]
 
 export default function Home() {
@@ -25,7 +25,6 @@ export default function Home() {
           <Link key={s.to} to={s.to} className="home-card">
             <span className="home-card-number">{String(index + 1).padStart(2, '0')}</span>
             <span className="home-card-label">{t(s.label)}</span>
-            <span className="home-card-blurb">{t(s.blurb)}</span>
             <span className="home-card-arrow" aria-hidden="true">
               →
             </span>

@@ -29,13 +29,17 @@ export default function Soccer() {
         <ol className="bench-list">
           {SUBSTITUTES.map((player, index) => (
             <li key={player.id} className={player.name ? 'has-player' : ''}>
-              <span className="bench-number">{String(index + 1).padStart(2, '0')}</span>
-              <span className="bench-role">{player.pos}</span>
-              {player.image ? (
-                <img src={player.image} alt="" />
-              ) : (
-                <span className="bench-avatar" aria-hidden="true">+</span>
-              )}
+              <span className="bench-meta">
+                <span className="bench-number">{String(index + 1).padStart(2, '0')}</span>
+                <span className="bench-role">{player.pos}</span>
+              </span>
+              <span className={`bench-slot${player.image ? '' : ' is-empty'}`}>
+                {player.image ? (
+                  <img src={player.image} alt="" />
+                ) : (
+                  <span aria-hidden="true">+</span>
+                )}
+              </span>
               <span className="bench-name">{player.name || t('soccer.open')}</span>
             </li>
           ))}
