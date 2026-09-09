@@ -52,7 +52,11 @@ export default function Guwen() {
   const current = requested?.authors.length ? requested : withPieces[0];
   const author =
     current?.authors.find((a) => a.name === params.get("a")) ?? null;
-  const piece = author?.pieces.find((x) => x.title === params.get("t")) ?? null;
+  // An author with a single piece has nothing to choose from, so opening the
+  // author opens the piece; a longer list still waits for a title.
+  const piece =
+    author?.pieces.find((x) => x.title === params.get("t")) ??
+    (author?.pieces.length === 1 ? author.pieces[0] : null);
   const activeRef = useRef(null);
   const readingRef = useRef(null);
 
@@ -136,7 +140,7 @@ export default function Guwen() {
                     {a.pieces.length} 篇
                   </span>
                 </button>
-                {open && (
+                {open && a.pieces.length > 1 && (
                   <ul className="guwen-titles">
                     {a.pieces.map((x) => (
                       <li key={x.title}>
@@ -186,7 +190,13 @@ export default function Guwen() {
               <p className="guwen-close">
                 <button
                   type="button"
-                  onClick={() => go({ p: current.id, a: author.name })}
+                  onClick={() =>
+                    go(
+                      author.pieces.length > 1
+                        ? { p: current.id, a: author.name }
+                        : { p: current.id },
+                    )
+                  }
                 >
                   收起
                 </button>
