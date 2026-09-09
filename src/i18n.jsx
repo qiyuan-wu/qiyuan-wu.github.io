@@ -9,7 +9,7 @@ const STRINGS = {
     'nav.home': 'Research',
     'nav.interests': 'Interests',
     'nav.projects': 'Old projects',
-    'nav.guwen': '古文',
+    'nav.guwen': 'Classical Chinese',
     'nav.albums': 'Albums',
     'nav.games': 'Games',
     'nav.soccer': 'Soccer',

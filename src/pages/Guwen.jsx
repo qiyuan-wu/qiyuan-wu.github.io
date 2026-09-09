@@ -44,7 +44,7 @@ function isVerse(body) {
 
 export default function Guwen() {
   const { t } = useLanguage();
-  useDocumentTitle(`古文 · ${t("site.name")}`);
+  useDocumentTitle(`${t("nav.guwen")} · ${t("site.name")}`);
   const [params, setParams] = useSearchParams();
 
   const withPieces = PERIODS.filter((p) => p.authors.length);
@@ -84,7 +84,7 @@ export default function Guwen() {
   return (
     <section className="page-section guwen-page" lang="zh-CN">
       <div className="section-head">
-        <h1>古文</h1>
+        <h1>{t("nav.guwen")}</h1>
       </div>
 
       <nav className="timeline" aria-label="朝代">
