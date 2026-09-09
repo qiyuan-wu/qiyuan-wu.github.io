@@ -33,16 +33,30 @@ export default function Guwen() {
   useDocumentTitle(`古文 · ${t('site.name')}`)
   const [params, setParams] = useSearchParams()
 
-  const withPieces = PERIODS.filter((p) => p.pieces.length)
+  const withPieces = PERIODS.filter((p) => p.authors.length)
   const requested = PERIODS.find((p) => p.id === params.get('p'))
-  const current = requested?.pieces.length ? requested : withPieces[0]
+  const current = requested?.authors.length ? requested : withPieces[0]
+  const author = current?.authors.find((a) => a.name === params.get('a')) ?? null
+  const piece = author?.pieces.find((x) => x.title === params.get('t')) ?? null
   const activeRef = useRef(null)
+  const readingRef = useRef(null)
+
+  // Everything lives in the URL, so a period, an author, or a single piece can
+  // be linked to directly; each level replaces the ones below it.
+  const go = (next) => {
+    const clean = Object.fromEntries(Object.entries(next).filter(([, v]) => v))
+    setParams(clean)
+  }
 
   // On a phone the line is wider than the screen; bring the chosen period into
   // view so a deep link to 宋 does not open on 先秦.
   useEffect(() => {
     activeRef.current?.scrollIntoView({ inline: 'center', block: 'nearest' })
   }, [current?.id])
+
+  useEffect(() => {
+    if (piece) readingRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' })
+  }, [piece])
 
   return (
     <section className="page-section guwen-page" lang="zh-CN">
@@ -53,8 +67,9 @@ export default function Guwen() {
       <nav className="timeline" aria-label="朝代">
         <ol>
           {PERIODS.map((period) => {
-            const empty = !period.pieces.length
+            const empty = !period.authors.length
             const active = period.id === current?.id
+            const count = period.authors.reduce((n, a) => n + a.pieces.length, 0)
             return (
               <li
                 key={period.id}
@@ -65,12 +80,12 @@ export default function Guwen() {
                   type="button"
                   disabled={empty}
                   aria-current={active ? 'true' : undefined}
-                  onClick={() => setParams({ p: period.id })}
+                  onClick={() => go({ p: period.id })}
                 >
                   <span className="timeline-dot" aria-hidden="true" />
                   <span className="timeline-name">{period.name}</span>
                   <span className="timeline-span">{period.span}</span>
-                  {!empty && <span className="timeline-count">{period.pieces.length}</span>}
+                  {!empty && <span className="timeline-count">{count}</span>}
                 </button>
               </li>
             )
@@ -79,24 +94,67 @@ export default function Guwen() {
       </nav>
 
       {current && (
-        <div className="guwen-pieces" key={current.id}>
-          {current.pieces.map((piece) => {
-            const verse = isVerse(piece.body)
+        <div className="guwen-authors" key={current.id}>
+          {current.authors.map((a) => {
+            const open = a.name === author?.name
             return (
-              <article key={piece.title} className={`guwen-piece${verse ? ' is-verse' : ' is-prose'}`}>
-                <h2>{piece.title}</h2>
-                {piece.author && <p className="guwen-author">{piece.author}</p>}
-                <div className="guwen-body">
-                  {piece.body.map((line, index) => (
-                    <p key={index}>
-                      <Line text={line} />
-                    </p>
-                  ))}
-                </div>
+              <article key={a.name} className={`guwen-author${open ? ' is-open' : ''}`}>
+                <button
+                  type="button"
+                  className="guwen-author-head"
+                  aria-expanded={open}
+                  onClick={() => go({ p: current.id, a: open ? '' : a.name })}
+                >
+                  <span className="guwen-author-name">{a.name}</span>
+                  <span className="guwen-author-dates">{a.dates}</span>
+                  <span className="guwen-author-count">{a.pieces.length} 篇</span>
+                </button>
+                {open && (
+                  <ul className="guwen-titles">
+                    {a.pieces.map((x) => (
+                      <li key={x.title}>
+                        <button
+                          type="button"
+                          className={x.title === piece?.title ? 'is-active' : ''}
+                          onClick={() => go({ p: current.id, a: a.name, t: x.title })}
+                        >
+                          {x.title}
+                          {x.subtitle && <small>{x.subtitle}</small>}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </article>
             )
           })}
         </div>
+      )}
+
+      {piece && (
+        <article
+          ref={readingRef}
+          key={piece.title}
+          className={`guwen-piece${isVerse(piece.body) ? ' is-verse' : ' is-prose'}`}
+        >
+          <h2>{piece.title}</h2>
+          <p className="guwen-byline">
+            {author.name}
+            {piece.subtitle && ` · ${piece.subtitle}`}
+          </p>
+          <div className="guwen-body">
+            {piece.body.map((line, index) => (
+              <p key={index}>
+                <Line text={line} />
+              </p>
+            ))}
+          </div>
+          <p className="guwen-close">
+            <button type="button" onClick={() => go({ p: current.id, a: author.name })}>
+              收起
+            </button>
+          </p>
+        </article>
       )}
     </section>
   )

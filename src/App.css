@@ -1479,16 +1479,122 @@ body.has-dialog {
   color: var(--accent);
 }
 
-.guwen-pieces {
-  max-width: 44rem;
+/* One period: its authors as cards. A card opens to the titles; a title opens
+   the reading pane below, so a click on 唐 shows 王勃, not eight paragraphs. */
+.guwen-authors {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  max-width: 960px;
   margin: 0 auto;
   animation: album-fade 0.25s ease;
 }
 
-.guwen-piece + .guwen-piece {
-  margin-top: clamp(40px, 6vw, 72px);
-  padding-top: clamp(32px, 5vw, 56px);
+.guwen-author {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+
+.guwen-author:hover,
+.guwen-author.is-open {
+  border-color: var(--accent);
+}
+
+.guwen-author-head {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  padding: 16px 18px;
+  background: none;
+  border: 0;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.guwen-author-name {
+  font-size: 1.35rem;
+  letter-spacing: 0.1em;
+}
+
+.guwen-author-dates {
+  color: var(--text-dim);
+  font-size: 0.86rem;
+  letter-spacing: 0.04em;
+}
+
+.guwen-author-count {
+  color: #5c6470;
+  font-size: 0.78rem;
+}
+
+.guwen-titles {
+  list-style: none;
+  margin: 0;
+  padding: 4px 10px 10px;
   border-top: 1px solid var(--border);
+}
+
+.guwen-titles button {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  width: 100%;
+  padding: 8px;
+  background: none;
+  border: 0;
+  border-radius: 8px;
+  color: var(--text);
+  font: inherit;
+  font-size: 1.02rem;
+  letter-spacing: 0.06em;
+  text-align: left;
+  cursor: pointer;
+}
+
+.guwen-titles button:hover,
+.guwen-titles button.is-active {
+  background: var(--surface-hover);
+  color: var(--accent);
+}
+
+.guwen-titles small {
+  color: var(--text-dim);
+  font-size: 0.78rem;
+}
+
+.guwen-piece {
+  max-width: 44rem;
+  margin: clamp(36px, 5vw, 60px) auto 0;
+  padding-top: clamp(28px, 4vw, 44px);
+  border-top: 1px solid var(--border);
+  scroll-margin-top: 90px;
+  animation: album-fade 0.25s ease;
+}
+
+.guwen-close {
+  margin: 28px 0 0;
+  text-align: center;
+}
+
+.guwen-close button {
+  padding: 7px 16px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-dim);
+  font: inherit;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+}
+
+.guwen-close button:hover {
+  color: var(--text);
+  border-color: var(--accent);
 }
 
 .guwen-piece h2 {
@@ -1499,7 +1605,7 @@ body.has-dialog {
   text-align: center;
 }
 
-.guwen-author {
+.guwen-byline {
   margin: 0 0 clamp(20px, 3vw, 32px);
   color: var(--text-dim);
   letter-spacing: 0.08em;
