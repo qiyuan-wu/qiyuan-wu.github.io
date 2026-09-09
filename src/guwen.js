@@ -304,7 +304,24 @@ export const PERIODS = [
     id: 'yuan',
     name: '元',
     span: '1271—1368',
-    authors: [],
+    authors: [
+      {
+        name: '马致远',
+        dates: '约1250—1321',
+        pieces: [
+          {
+            title: '天净沙·秋思',
+            body: [
+              '枯藤老树昏鸦，',
+              '小桥流水人家，',
+              '古道西风瘦马。',
+              '夕阳西下，',
+              '断肠人在天涯。',
+            ],
+          },
+        ],
+      },
+    ],
   },
   {
     id: 'ming',
