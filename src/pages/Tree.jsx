@@ -1,11 +1,12 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDocumentTitle } from '../useDocumentTitle.js'
 import { useTree } from '../useTree.js'
 import { buildTree, migrateClades } from '../tree/newick.js'
 import { inducedNewick, matchSpecies } from '../tree/opentree.js'
 
 const ROW = 48 // one tip, two lines of label
-const COL = 104
+const COL_MIN = 64 // columns shrink to fit the screen, but no further than this
+const COL_MAX = 140
 const TRI = 26 // width of a folded clade's triangle
 const LABEL_W = 236
 const PAD = 18
@@ -60,12 +61,34 @@ function useNarrow() {
   return narrow
 }
 
-function Cladogram({ tree, collapsed, onNode, activeId }) {
+// Width of whatever element the ref is on, kept current as the window changes.
+function useWidth(ref) {
+  const [width, setWidth] = useState(0)
+  useEffect(() => {
+    const element = ref.current
+    if (!element) return undefined
+    const observer = new ResizeObserver(([entry]) =>
+      setWidth(entry.contentRect.width),
+    )
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [ref])
+  return width
+}
+
+function Cladogram({ tree, collapsed, onNode, activeId, available }) {
   const { rows, tipCount, tipDepth } = useMemo(
     () => layout(tree, collapsed),
     [tree, collapsed],
   )
 
+  // Spread the depth across whatever width there is. Only the columns stretch;
+  // text stays its natural size, and a very deep tree still scrolls rather than
+  // crushing its columns to nothing.
+  const COL = Math.max(
+    COL_MIN,
+    Math.min(COL_MAX, Math.floor((available - LABEL_W) / tipDepth)),
+  )
   const plotW = tipDepth * COL
   const width = plotW + LABEL_W
   const height = tipCount * ROW + PAD * 2
@@ -232,6 +255,8 @@ export default function Animals() {
   useDocumentTitle('Tree · Qiyuan Wu')
   const { data, tree, canEdit, save } = useTree()
   const narrow = useNarrow()
+  const canvasRef = useRef(null)
+  const available = useWidth(canvasRef)
 
   const [collapsed, setCollapsed] = useState(() => new Set())
   const [editing, setEditing] = useState(false)
@@ -387,7 +412,7 @@ export default function Animals() {
       )}
 
       {tree && (
-        <div className={narrow ? 'tree-list' : 'tree-canvas'}>
+        <div ref={canvasRef} className={narrow ? 'tree-list' : 'tree-canvas'}>
           {narrow ? (
             <ul>
               <IndentedTree
@@ -398,12 +423,15 @@ export default function Animals() {
               />
             </ul>
           ) : (
-            <Cladogram
-              tree={tree}
-              collapsed={collapsed}
-              onNode={onNode}
-              activeId={selected?.id}
-            />
+            available > 0 && (
+              <Cladogram
+                tree={tree}
+                collapsed={collapsed}
+                onNode={onNode}
+                activeId={selected?.id}
+                available={available}
+              />
+            )
           )}
         </div>
       )}

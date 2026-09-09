@@ -861,9 +861,22 @@ body.has-dialog {
 
 /* ---- Tree of life ----------------------------------------------------- */
 
+.tree-page {
+  /* The drawing wants the whole viewport; the text around it does not. */
+  max-width: none;
+}
+
 .tree-page .section-sub {
   max-width: 60ch;
   margin: 0 auto;
+}
+
+.tree-page .tree-toolbar,
+.tree-page .tree-editor,
+.tree-page .tree-empty {
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .tree-toolbar {
@@ -994,7 +1007,7 @@ body.has-dialog {
 .tree-list ul {
   list-style: none;
   margin: 0;
-  padding-left: 18px;
+  padding-left: 6px;
 }
 
 .tree-list > ul {
@@ -1003,7 +1016,7 @@ body.has-dialog {
 
 .tree-list li {
   border-left: 1px solid var(--border);
-  padding-left: 12px;
+  padding-left: 10px;
 }
 
 .tree-list > ul > li {
@@ -1039,7 +1052,7 @@ body.has-dialog {
 }
 
 .tree-list-tip {
-  padding: 6px 0 6px 12px;
+  padding: 6px 0 6px 10px;
 }
 
 .tree-list-common {
