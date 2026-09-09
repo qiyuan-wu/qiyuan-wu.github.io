@@ -3,8 +3,9 @@ import { INTERESTS, isInterestPath } from './interests.js'
 import { useLanguage } from './i18n.jsx'
 
 // The nav is two entries: the front page (bio, CV, research) and Interests.
-// Inside Interests a second row lists its pages, so hopping between 古文 and
-// the albums is still one click.
+// Inside one of the interest pages a second row lists them all, so hopping
+// between 古文 and the albums is still one click. The hub itself has the
+// boxes and needs no row.
 export default function Layout() {
   const { lang, setLang, t } = useLanguage()
   const { pathname } = useLocation()
@@ -34,7 +35,7 @@ export default function Layout() {
         </nav>
       </header>
 
-      {inInterests && (
+      {inInterests && pathname !== '/interests' && (
         <nav className="sub-links" aria-label={t('nav.interests')}>
           {INTERESTS.map((s) => (
             <NavLink key={s.to} to={s.to}>
