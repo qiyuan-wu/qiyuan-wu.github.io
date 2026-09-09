@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import { CV } from '../cv.js'
-import { PdfView } from '../PdfView.jsx'
 import { useDocumentTitle } from '../useDocumentTitle.js'
 import { useLanguage } from '../i18n.jsx'
 
@@ -39,9 +38,6 @@ export default function Home() {
           </p>
         </div>
       </header>
-
-      {/* The PDF itself, so there is one CV and not two that drift. */}
-      <PdfView src={CV.pdf} />
 
       <nav className="home-more" aria-label={t('home.more')}>
         <h2>{t('home.more')}</h2>
