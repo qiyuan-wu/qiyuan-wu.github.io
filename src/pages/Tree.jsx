@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link, NavLink, useNavigate, useParams } from 'react-router-dom'
 import { useDocumentTitle } from '../useDocumentTitle.js'
 import { useLanguage } from '../i18n.jsx'
-import { useTree } from '../useTree.js'
+import { useTrees } from '../useTrees.js'
 import { buildTree, migrateClades } from '../tree/newick.js'
-import { inducedNewick, matchSpecies } from '../tree/opentree.js'
+import { inducedNewick, lineageOf, matchClade, matchSpecies } from '../tree/opentree.js'
 
 const ROW = 48 // one tip, two lines of label
 const COL_MIN = 64 // columns shrink to fit the screen, but no further than this
@@ -86,7 +87,7 @@ function useWidth(ref) {
   return width
 }
 
-function Cladogram({ tree, collapsed, onNode, activeId, available, nameOf }) {
+function Cladogram({ tree, collapsed, onNode, activeId, available, nameOf, focusFor, onOpen }) {
   const { rows, tipCount, tipDepth } = useMemo(
     () => layout(tree, collapsed),
     [tree, collapsed],
@@ -206,11 +207,29 @@ function Cladogram({ tree, collapsed, onNode, activeId, available, nameOf }) {
           >
             <circle className="tree-hit" cx={px} cy={py} r={13} />
             <circle className="tree-dot" cx={px} cy={py} r={4} />
-            {row.node.label && (
-              <text className="tree-clade" x={px + 8} y={py - 9}>
-                {row.node.label}
-              </text>
-            )}
+            {(() => {
+              const focus = focusFor(row.node)
+              const label = row.node.label || focus?.name
+              if (!label) return null
+              return (
+                <text
+                  className={`tree-clade${focus ? ' is-link' : ''}`}
+                  x={px + 8}
+                  y={py - 9}
+                  onClick={
+                    focus
+                      ? (event) => {
+                          event.stopPropagation()
+                          onOpen(focus, row.node)
+                        }
+                      : undefined
+                  }
+                >
+                  {label}
+                  {focus && ' ▸'}
+                </text>
+              )
+            })()}
           </g>
         )
       })}
@@ -221,7 +240,7 @@ function Cladogram({ tree, collapsed, onNode, activeId, available, nameOf }) {
 // The same tree, minus the geometry. Narrow screens have no room for a column
 // of tips 500px to the right of the root, and indentation carries the nesting
 // on its own.
-function IndentedTree({ node, collapsed, onNode, activeId, nameOf, depth = 0 }) {
+function IndentedTree({ node, collapsed, onNode, activeId, nameOf, focusFor, depth = 0 }) {
   if (!node.children.length) {
     return (
       <li className="tree-list-tip">
@@ -232,6 +251,7 @@ function IndentedTree({ node, collapsed, onNode, activeId, nameOf, depth = 0 }) 
   }
 
   const folded = collapsed.has(node.id)
+  const focus = focusFor(node)
   return (
     <li>
       <button
@@ -242,6 +262,11 @@ function IndentedTree({ node, collapsed, onNode, activeId, nameOf, depth = 0 }) 
         <span className="tree-list-caret">{folded ? '▸' : '▾'}</span>
         {node.label || foldedLabel(node)}
         <span className="tree-count">{node.leafCount}</span>
+        {focus && (
+          <Link className="tree-list-open" to={`/tree/${focus.id}`} onClick={(e) => e.stopPropagation()}>
+            {focus.name} ▸
+          </Link>
+        )}
       </button>
       {!folded && (
         <ul>
@@ -253,6 +278,7 @@ function IndentedTree({ node, collapsed, onNode, activeId, nameOf, depth = 0 }) 
               onNode={onNode}
               activeId={activeId}
               nameOf={nameOf}
+              focusFor={focusFor}
               depth={depth + 1}
             />
           ))}
@@ -309,11 +335,42 @@ function SpeciesRow({ species, busy, onRename, onRemove }) {
   )
 }
 
+const slug = (name) =>
+  name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+
 export default function Tree() {
   const { lang, t } = useLanguage()
-  useDocumentTitle(`${t('tree.title')} · ${t('site.name')}`)
-  const { data, tree, canEdit, save } = useTree()
+  const { id = 'global' } = useParams()
+  const navigate = useNavigate()
+  const { docs, focusTrees, canEdit, save, remove, renameEverywhere } = useTrees()
   const narrow = useNarrow()
+
+  const data = docs[id]
+  const isFocus = id !== 'global'
+  const treeName = (d) => (lang === 'zh' && d?.zh) || d?.name || ''
+  const title = isFocus ? treeName(data) || t('tree.title') : t('tree.title')
+  useDocumentTitle(`${title} · ${t('site.name')}`)
+
+  // Parsing ~4KB of Newick is cheap, but it runs on every render otherwise.
+  const tree = useMemo(
+    () => (data ? buildTree(data.newick, { species: data.species, clades: data.clades }) : null),
+    [data],
+  )
+
+  // A split on this tree that has a focus tree of its own — Primates on the
+  // main tree, say — gets a link instead of just a label. The match is on the
+  // clade's name, which Open Tree attaches to the split as a candidate.
+  const focusFor = (node) => {
+    if (isFocus || !node.children?.length) return null
+    return (
+      focusTrees.find(
+        (f) => node.label === f.root.name || node.candidates?.includes(f.root.name),
+      ) ?? null
+    )
+  }
 
   // Chinese readers get the Chinese name where one has been filled in, and the
   // English one until then — a half-translated tree beats a half-empty one.
@@ -369,7 +426,7 @@ export default function Tree() {
       const kept = species.filter((s) => !dropped.includes(s.ott))
       const rebuilt = buildTree(newick, { species: kept, clades: {} })
       const clades = migrateClades(data.clades, rebuilt)
-      await save({ species: kept, newick, clades })
+      await save(id, { ...data, species: kept, newick, clades })
 
       const lost = Object.keys(data.clades ?? {}).length - Object.keys(clades).length
       setStatus(
@@ -406,15 +463,46 @@ export default function Tree() {
     }
   }
 
+  // Names already given to this species on another tree, so they carry over.
+  const known = (ott) => {
+    for (const d of Object.values(docs)) {
+      const hit = d.species?.find((s) => s.ott === ott)
+      if (hit) return hit
+    }
+    return null
+  }
+
   const addPending = async () => {
     if (!pending) return
     if (data.species.some((s) => s.ott === pending.ott)) {
       setStatus(`${pending.sci} is already on the tree.`)
       return
     }
+    // A focus tree is rooted in a clade; only members get in.
+    if (isFocus) {
+      setBusy(true)
+      try {
+        const lineage = await lineageOf(pending.ott)
+        if (!lineage.includes(data.root.ott)) {
+          setStatus(`${pending.sci} is not within ${data.root.name}.`)
+          return
+        }
+      } catch (error) {
+        setStatus(error.message)
+        return
+      } finally {
+        setBusy(false)
+      }
+    }
+    const prior = known(pending.ott)
     await applySpecies([
       ...data.species,
-      { ott: pending.ott, sci: pending.sci, common: common.trim(), zh: zh.trim() },
+      {
+        ott: pending.ott,
+        sci: pending.sci,
+        common: common.trim() || prior?.common || '',
+        zh: zh.trim() || prior?.zh || '',
+      },
     ])
     setQuery('')
     setMatches(null)
@@ -423,17 +511,87 @@ export default function Tree() {
     setZh('')
   }
 
-  // Renaming touches no topology, so it is a plain document write.
+  // Renaming touches no topology; it is a plain write — to every tree the
+  // species is on, so a name lives once.
   const rename = async (next) => {
     setBusy(true)
     try {
-      await save({
-        ...data,
-        species: data.species.map((s) => (s.ott === next.ott ? next : s)),
-      })
+      await renameEverywhere(next)
     } catch (error) {
       setStatus(error.message)
     } finally {
+      setBusy(false)
+    }
+  }
+
+  const [newName, setNewName] = useState('')
+  const [newZh, setNewZh] = useState('')
+  const [cladeQuery, setCladeQuery] = useState('')
+  const [cladeMatches, setCladeMatches] = useState(null)
+  const [cladeRoot, setCladeRoot] = useState(null)
+
+  const searchClade = async (event) => {
+    event.preventDefault()
+    if (!cladeQuery.trim()) return
+    setBusy(true)
+    setStatus('')
+    try {
+      const found = await matchClade(cladeQuery.trim())
+      setCladeMatches(found)
+      if (!found.length) setStatus(`No clade in Open Tree matches “${cladeQuery}”.`)
+    } catch (error) {
+      setStatus(error.message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  // A focus tree starts with whatever the main tree already holds inside the
+  // clade; its labels come along because they are keyed by tip set.
+  const createTree = async () => {
+    if (!cladeRoot) return
+    const newId = slug(cladeRoot.name)
+    if (docs[newId]) {
+      setStatus(`There is already a tree for ${cladeRoot.name}.`)
+      return
+    }
+    setBusy(true)
+    setStatus('')
+    try {
+      const main = docs.global
+      const lineages = await Promise.all(main.species.map((s) => lineageOf(s.ott).catch(() => [])))
+      const species = main.species.filter((s, i) => lineages[i].includes(cladeRoot.ott))
+      const newick = species.length >= 2 ? (await inducedNewick(species.map((s) => s.ott))).newick : ''
+      const clades = migrateClades(main.clades, buildTree(newick, { species, clades: {} }))
+      await save(newId, {
+        name: newName.trim() || cladeRoot.name,
+        zh: newZh.trim(),
+        root: { ott: cladeRoot.ott, name: cladeRoot.name },
+        species,
+        newick,
+        clades,
+      })
+      setNewName('')
+      setNewZh('')
+      setCladeQuery('')
+      setCladeMatches(null)
+      setCladeRoot(null)
+      navigate(`/tree/${newId}`)
+    } catch (error) {
+      setStatus(error.message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const deleteTree = async () => {
+    if (!window.confirm(`Delete the ${data.name} tree? Its species stay on any other tree.`)) return
+    setBusy(true)
+    try {
+      await remove(id)
+      navigate('/tree')
+    } catch (error) {
+      setStatus(error.message)
       setBusy(false)
     }
   }
@@ -445,7 +603,7 @@ export default function Tree() {
     else delete clades[selected.id]
     setBusy(true)
     try {
-      await save({ ...data, clades })
+      await save(id, { ...data, clades })
       setSelected(null)
     } catch (error) {
       setStatus(error.message)
@@ -454,11 +612,38 @@ export default function Tree() {
     }
   }
 
+  if (!data) {
+    return (
+      <section className="page-section tree-page">
+        <div className="section-head">
+          <h1>{t('tree.title')}</h1>
+        </div>
+        <p className="tree-empty">
+          {t('tree.missing')} <Link to="/tree">← {t('tree.title')}</Link>
+        </p>
+      </section>
+    )
+  }
+
   return (
     <section className="page-section tree-page">
       <div className="section-head">
-        <h1>{t('tree.title')}</h1>
+        <h1>{title}</h1>
       </div>
+
+      {(focusTrees.length > 0 || isFocus) && (
+        <nav className="tree-tabs" aria-label={t('tree.title')}>
+          <NavLink to="/tree" end>
+            {t('tree.all')}
+          </NavLink>
+          {focusTrees.map((f) => (
+            <NavLink key={f.id} to={`/tree/${f.id}`}>
+              {treeName(f)}
+              {treeName(f) !== f.root.name && <em>{f.root.name}</em>}
+            </NavLink>
+          ))}
+        </nav>
+      )}
 
       {canEdit && (
         <div className="tree-toolbar">
@@ -491,6 +676,7 @@ export default function Tree() {
                 onNode={onNode}
                 activeId={selected?.id}
                 nameOf={nameOf}
+                focusFor={focusFor}
               />
             </ul>
           ) : (
@@ -502,6 +688,8 @@ export default function Tree() {
                 activeId={selected?.id}
                 available={available}
                 nameOf={nameOf}
+                focusFor={focusFor}
+                onOpen={(focus) => navigate(`/tree/${focus.id}`)}
               />
             )
           )}
@@ -620,6 +808,75 @@ export default function Tree() {
               ))}
             </ul>
           </div>
+
+          {!isFocus && (
+            <div className="tree-panel">
+              <h2>New focus tree</h2>
+              <p className="tree-panel-sub">
+                Rooted in a clade. It starts with whatever the main tree already
+                holds inside that clade, and can take species the main tree does not show.
+              </p>
+              <form className="tree-row" onSubmit={searchClade}>
+                <input
+                  value={cladeQuery}
+                  onChange={(event) => setCladeQuery(event.target.value)}
+                  placeholder="Clade — Primates, Carnivora, Squamata…"
+                />
+                <button type="submit" disabled={busy}>
+                  Search
+                </button>
+              </form>
+              {cladeMatches?.length > 0 && (
+                <ul className="tree-matches">
+                  {cladeMatches.map((match) => (
+                    <li key={match.ott}>
+                      <button
+                        type="button"
+                        className={cladeRoot?.ott === match.ott ? 'is-on' : ''}
+                        onClick={() => {
+                          setCladeRoot(match)
+                          if (!newName) setNewName(match.name)
+                        }}
+                      >
+                        <em>{match.name}</em>
+                        <span>{match.rank}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {cladeRoot && (
+                <div className="tree-row">
+                  <input
+                    value={newName}
+                    onChange={(event) => setNewName(event.target.value)}
+                    placeholder="Name"
+                  />
+                  <input
+                    lang="zh-CN"
+                    value={newZh}
+                    onChange={(event) => setNewZh(event.target.value)}
+                    placeholder="中文名"
+                  />
+                  <button type="button" disabled={busy} onClick={createTree}>
+                    Create
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {isFocus && (
+            <div className="tree-panel">
+              <h2>This tree</h2>
+              <p className="tree-panel-sub">
+                Rooted in <em>{data.root.name}</em>. Only species inside it can be added.
+              </p>
+              <button type="button" className="tree-danger" disabled={busy} onClick={deleteTree}>
+                Delete this tree
+              </button>
+            </div>
+          )}
 
           {status && <p className="tree-status">{status}</p>}
         </div>

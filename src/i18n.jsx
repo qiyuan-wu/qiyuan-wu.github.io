@@ -40,6 +40,8 @@ const STRINGS = {
     'soccer.open': 'Open place',
 
     'tree.title': 'Tree',
+    'tree.all': 'All life',
+    'tree.missing': 'No such tree.',
     'tree.empty': 'Two species is the minimum for a tree. There are {n} so far.',
 
     'notfound.title': 'Not found',
@@ -81,6 +83,8 @@ const STRINGS = {
     'soccer.open': '空位',
 
     'tree.title': '演化树',
+    'tree.all': '全部',
+    'tree.missing': '没有这棵树。',
     'tree.empty': '至少要两个物种才能成树，目前有 {n} 个。',
 
     'notfound.title': '页面不存在',

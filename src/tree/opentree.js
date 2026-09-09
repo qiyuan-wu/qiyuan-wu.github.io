@@ -55,3 +55,18 @@ export async function inducedNewick(ottIds) {
     return { newick: (await ask(kept)).newick, dropped: unknown }
   }
 }
+
+// A clade to root a focus tree in: anything above species rank.
+export async function matchClade(query) {
+  const data = await post('/tnrs/match_names', { names: [query], do_approximate_matching: true })
+  return (data.results?.[0]?.matches ?? [])
+    .filter((m) => !['species', 'subspecies', 'variety', 'form'].includes(m.taxon.rank))
+    .slice(0, 6)
+    .map((m) => ({ ott: m.taxon.ott_id, name: m.taxon.name, rank: m.taxon.rank ?? '' }))
+}
+
+// Every taxon above this one, root-most last — the test for "is this a primate".
+export async function lineageOf(ott) {
+  const data = await post('/taxonomy/taxon_info', { ott_id: ott, include_lineage: true })
+  return [data.ott_id, ...(data.lineage ?? []).map((l) => l.ott_id)]
+}

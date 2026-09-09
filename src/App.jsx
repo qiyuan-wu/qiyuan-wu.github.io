@@ -20,6 +20,7 @@ export default function App() {
         <Route path="soccer" element={<Soccer />} />
         <Route path="albums" element={<Albums />} />
         <Route path="tree" element={<Tree />} />
+        <Route path="tree/:id" element={<Tree />} />
         <Route path="projects" element={<Projects />} />
         <Route path="guwen" element={<Guwen />} />
         <Route path="cv" element={<Navigate to="/" replace />} />
