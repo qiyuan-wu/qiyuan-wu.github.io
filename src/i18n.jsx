@@ -6,6 +6,8 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 const STRINGS = {
   en: {
     'site.name': 'Qiyuan Wu',
+    'nav.projects': 'Projects',
+    'nav.guwen': '古文',
     'nav.albums': 'Albums',
     'nav.games': 'Games',
     'nav.soccer': 'Soccer',
@@ -13,6 +15,8 @@ const STRINGS = {
     'nav.switch': '中',
     'nav.switchLabel': 'Switch to Chinese',
 
+
+    'projects.title': 'Projects',
 
     'albums.title': 'Albums + comps',
     'albums.songs': '{n} songs',
@@ -36,6 +40,8 @@ const STRINGS = {
   },
   zh: {
     'site.name': '吴其远',
+    'nav.projects': '项目',
+    'nav.guwen': '古文',
     'nav.albums': '唱片',
     'nav.games': '游戏',
     'nav.soccer': '足球',
@@ -43,6 +49,8 @@ const STRINGS = {
     'nav.switch': 'EN',
     'nav.switchLabel': '切换到英文',
 
+
+    'projects.title': '项目',
 
     'albums.title': '专辑与合辑',
     'albums.songs': '{n} 首',

@@ -3,6 +3,8 @@ import { useDocumentTitle } from '../useDocumentTitle.js'
 import { useLanguage } from '../i18n.jsx'
 
 const SECTIONS = [
+  { to: '/projects', label: 'nav.projects' },
+  { to: '/guwen', label: 'nav.guwen' },
   { to: '/albums', label: 'nav.albums' },
   { to: '/games', label: 'nav.games' },
   { to: '/soccer', label: 'nav.soccer' },
