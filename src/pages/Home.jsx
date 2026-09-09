@@ -22,7 +22,7 @@ export default function Home() {
   return (
     <section className="page-section bio-page">
       <header className="bio">
-        <img className="bio-photo" src="/portrait-deathvalley.jpg" alt="" />
+        <img className="bio-photo" src="/portrait.jpg" alt="" />
         <div className="bio-text">
           <h1>{t('site.name')}</h1>
           <p className="bio-role">{t('bio.role')}</p>
