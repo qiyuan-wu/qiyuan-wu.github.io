@@ -190,6 +190,19 @@ export const PERIODS = [
         ],
       },
       {
+        name: '王维',
+        dates: '701—761',
+        pieces: [
+          {
+            title: '画',
+            body: [
+              '远看山有色，近听水无声。',
+              '春去花还在，人来鸟不惊。',
+            ],
+          },
+        ],
+      },
+      {
         name: '杜甫',
         dates: '712—770',
         pieces: [
