@@ -41,11 +41,6 @@ export const PROJECTS = [
     ],
   },
   {
-    id: 'rapid',
-    title: 'Project Rapid',
-    images: [{ src: '/projects/rapid-1.png', caption: 'Satellite structure, CAD' }],
-  },
-  {
     id: 'trumpet',
     title: 'Automatic Trumpet',
     images: [
