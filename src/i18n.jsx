@@ -6,7 +6,6 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 const STRINGS = {
   en: {
     'site.name': 'Qiyuan Wu',
-    'nav.cv': 'CV',
     'nav.projects': 'Projects',
     'nav.guwen': '古文',
     'nav.albums': 'Albums',
@@ -18,8 +17,13 @@ const STRINGS = {
 
 
     'projects.title': 'Projects',
-    'cv.title': 'CV',
-    'cv.pdf': 'Download PDF',
+    'cv.pdf': 'Download CV',
+    'home.more': 'Elsewhere',
+
+    // DRAFT — written from the CV as a placeholder until the real one arrives.
+    'bio.role': 'M.S. student in Aerospace Engineering, UCLA',
+    'bio.text':
+      'I work on unsteady fluid dynamics — viscous streaming and Lagrangian coherent structures in the SOFIA Laboratory — and on getting quadrotors to plan around the air they fly through. Away from it: sea lions at the California Wildlife Center, old records, and classical Chinese.',
 
     'albums.title': 'Albums + comps',
     'albums.songs': '{n} songs',
@@ -43,7 +47,6 @@ const STRINGS = {
   },
   zh: {
     'site.name': '吴其远',
-    'nav.cv': '简历',
     'nav.projects': '项目',
     'nav.guwen': '古文',
     'nav.albums': '唱片',
@@ -55,8 +58,13 @@ const STRINGS = {
 
 
     'projects.title': '项目',
-    'cv.title': '简历',
-    'cv.pdf': '下载 PDF',
+    'cv.pdf': '下载简历',
+    'home.more': '其他',
+
+    // 草稿 — 由简历改写的占位文字，等正式版。
+    'bio.role': '加州大学洛杉矶分校 航空航天工程硕士生',
+    'bio.text':
+      '研究非定常流体力学——SOFIA 实验室的粘性声流与拉格朗日拟序结构——以及让四旋翼在规划航迹时把气流算进去。之外的时间：在加州野生动物中心照顾海狮，听老唱片，读古文。',
 
     'albums.title': '专辑与合辑',
     'albums.songs': '{n} 首',

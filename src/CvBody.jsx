@@ -1,6 +1,4 @@
-import { CV } from '../cv.js'
-import { useDocumentTitle } from '../useDocumentTitle.js'
-import { useLanguage } from '../i18n.jsx'
+import { CV } from './cv.js'
 
 // The CV is English: it is read by people who read CVs. Only the chrome
 // around it follows the site language.
@@ -34,29 +32,9 @@ function Entry({ title, where, when, note, points }) {
   )
 }
 
-export default function Cv() {
-  const { t } = useLanguage()
-  useDocumentTitle(`${t('cv.title')} · ${t('site.name')}`)
-
+export function CvBody() {
   return (
-    <section className="page-section cv-page" lang="en">
-      <header className="cv-head">
-        <div>
-          <h1>{CV.name}</h1>
-          <p className="cv-contact">
-            {CV.contact.map((c, index) => (
-              <span key={c.label}>
-                {index > 0 && ' · '}
-                <a href={c.href}>{c.text}</a>
-              </span>
-            ))}
-          </p>
-        </div>
-        <a className="cv-pdf" href={CV.pdf} download>
-          {t('cv.pdf')}
-        </a>
-      </header>
-
+    <div className="cv-body" lang="en">
       <Section title="Education">
         {CV.education.map((e) => (
           <Entry key={e.degree} title={e.degree} where={`${e.school} · ${e.note}`} when={e.years} />
@@ -96,6 +74,6 @@ export default function Cv() {
           <Entry key={a.title} {...a} />
         ))}
       </Section>
-    </section>
+    </div>
   )
 }
