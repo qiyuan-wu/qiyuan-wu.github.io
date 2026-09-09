@@ -40,7 +40,6 @@ export default function Projects() {
     <section className="page-section projects-page">
       <div className="section-head">
         <h1>{t('projects.title')}</h1>
-        <p className="section-sub">{t('projects.sub')}</p>
       </div>
 
       {PROJECTS.map((project) => (
