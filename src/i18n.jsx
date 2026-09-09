@@ -13,7 +13,7 @@ const STRINGS = {
     'nav.albums': 'Albums',
     'nav.games': 'Games',
     'nav.soccer': 'Soccer',
-    'nav.tree': 'Tree',
+    'nav.tree': 'Tree of Life',
     'nav.switch': '中',
     'nav.switchLabel': 'Switch to Chinese',
 
@@ -59,7 +59,7 @@ const STRINGS = {
     'soccer.places': '{n} places',
     'soccer.open': 'Open place',
 
-    'tree.title': 'Tree',
+    'tree.title': 'Tree of Life',
     'tree.all': 'All life',
     'tree.missing': 'No such tree.',
     'tree.empty': 'Two species is the minimum for a tree. There are {n} so far.',
@@ -76,7 +76,7 @@ const STRINGS = {
     'nav.albums': '唱片',
     'nav.games': '游戏',
     'nav.soccer': '足球',
-    'nav.tree': '演化树',
+    'nav.tree': '生命之树',
     'nav.switch': 'EN',
     'nav.switchLabel': '切换到英文',
 
@@ -122,7 +122,7 @@ const STRINGS = {
     'soccer.places': '{n} 个席位',
     'soccer.open': '空位',
 
-    'tree.title': '演化树',
+    'tree.title': '生命之树',
     'tree.all': '全部',
     'tree.missing': '没有这棵树。',
     'tree.empty': '至少要两个物种才能成树，目前有 {n} 个。',
