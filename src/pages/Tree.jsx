@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDocumentTitle } from '../useDocumentTitle.js'
+import { useLanguage } from '../i18n.jsx'
 import { useTree } from '../useTree.js'
 import { buildTree, migrateClades } from '../tree/newick.js'
 import { inducedNewick, matchSpecies } from '../tree/opentree.js'
@@ -76,7 +77,7 @@ function useWidth(ref) {
   return width
 }
 
-function Cladogram({ tree, collapsed, onNode, activeId, available }) {
+function Cladogram({ tree, collapsed, onNode, activeId, available, nameOf }) {
   const { rows, tipCount, tipDepth } = useMemo(
     () => layout(tree, collapsed),
     [tree, collapsed],
@@ -167,11 +168,11 @@ function Cladogram({ tree, collapsed, onNode, activeId, available }) {
               <text
                 className="tree-tip-name"
                 x={px + 12}
-                y={row.node.common ? py - 2 : py + 4}
+                y={nameOf(row.node) ? py - 2 : py + 4}
               >
-                {row.node.common || row.node.sci}
+                {nameOf(row.node) || row.node.sci}
               </text>
-              {row.node.common && (
+              {nameOf(row.node) && (
                 <text className="tree-tip-sci" x={px + 12} y={py + 13}>
                   {row.node.sci}
                 </text>
@@ -211,12 +212,12 @@ function Cladogram({ tree, collapsed, onNode, activeId, available }) {
 // The same tree, minus the geometry. Narrow screens have no room for a column
 // of tips 500px to the right of the root, and indentation carries the nesting
 // on its own.
-function IndentedTree({ node, collapsed, onNode, activeId, depth = 0 }) {
+function IndentedTree({ node, collapsed, onNode, activeId, nameOf, depth = 0 }) {
   if (!node.children.length) {
     return (
       <li className="tree-list-tip">
-        <span className="tree-list-common">{node.common || node.sci}</span>
-        {node.common && <span className="tree-list-sci">{node.sci}</span>}
+        <span className="tree-list-common">{nameOf(node) || node.sci}</span>
+        {nameOf(node) && <span className="tree-list-sci">{node.sci}</span>}
       </li>
     )
   }
@@ -242,6 +243,7 @@ function IndentedTree({ node, collapsed, onNode, activeId, depth = 0 }) {
               collapsed={collapsed}
               onNode={onNode}
               activeId={activeId}
+              nameOf={nameOf}
               depth={depth + 1}
             />
           ))}
@@ -251,10 +253,62 @@ function IndentedTree({ node, collapsed, onNode, activeId, depth = 0 }) {
   )
 }
 
-export default function Animals() {
-  useDocumentTitle('Tree · Qiyuan Wu')
+// One species in the editor list. Names are edited in place and saved when the
+// field loses focus, so filling in twenty-five Chinese names is tab, type, tab.
+function SpeciesRow({ species, busy, onRename, onRemove }) {
+  const [common, setCommon] = useState(species.common ?? '')
+  const [zh, setZh] = useState(species.zh ?? '')
+
+  const commit = () => {
+    const next = { ...species, common: common.trim(), zh: zh.trim() }
+    if (next.common === (species.common ?? '') && next.zh === (species.zh ?? '')) return
+    onRename(next)
+  }
+  const blurOnEnter = (event) => {
+    if (event.key === 'Enter') event.currentTarget.blur()
+  }
+
+  return (
+    <li>
+      <em>{species.sci}</em>
+      <input
+        value={common}
+        onChange={(event) => setCommon(event.target.value)}
+        onBlur={commit}
+        onKeyDown={blurOnEnter}
+        placeholder="Common name"
+        aria-label={`English name for ${species.sci}`}
+      />
+      <input
+        lang="zh-CN"
+        value={zh}
+        onChange={(event) => setZh(event.target.value)}
+        onBlur={commit}
+        onKeyDown={blurOnEnter}
+        placeholder="中文名"
+        aria-label={`Chinese name for ${species.sci}`}
+      />
+      <button
+        type="button"
+        disabled={busy}
+        aria-label={`Remove ${species.sci}`}
+        onClick={onRemove}
+      >
+        ×
+      </button>
+    </li>
+  )
+}
+
+export default function Tree() {
+  const { lang, t } = useLanguage()
+  useDocumentTitle(`${t('tree.title')} · Qiyuan Wu`)
   const { data, tree, canEdit, save } = useTree()
   const narrow = useNarrow()
+
+  // Chinese readers get the Chinese name where one has been filled in, and the
+  // English one until then — a half-translated tree beats a half-empty one.
+  const nameOf = (node) => (lang === 'zh' && node.zh) || node.common || ''
   const canvasRef = useRef(null)
   const available = useWidth(canvasRef)
 
@@ -266,6 +320,7 @@ export default function Animals() {
   const [matches, setMatches] = useState(null)
   const [pending, setPending] = useState(null)
   const [common, setCommon] = useState('')
+  const [zh, setZh] = useState('')
   const [busy, setBusy] = useState(false)
   const [status, setStatus] = useState('')
 
@@ -350,12 +405,28 @@ export default function Animals() {
     }
     await applySpecies([
       ...data.species,
-      { ott: pending.ott, sci: pending.sci, common: common.trim() },
+      { ott: pending.ott, sci: pending.sci, common: common.trim(), zh: zh.trim() },
     ])
     setQuery('')
     setMatches(null)
     setPending(null)
     setCommon('')
+    setZh('')
+  }
+
+  // Renaming touches no topology, so it is a plain document write.
+  const rename = async (next) => {
+    setBusy(true)
+    try {
+      await save({
+        ...data,
+        species: data.species.map((s) => (s.ott === next.ott ? next : s)),
+      })
+    } catch (error) {
+      setStatus(error.message)
+    } finally {
+      setBusy(false)
+    }
   }
 
   const saveLabel = async (value) => {
@@ -377,14 +448,9 @@ export default function Animals() {
   return (
     <section className="page-section tree-page">
       <div className="section-head">
-        <p className="page-eyebrow">However far back it goes</p>
-        <h1>Tree</h1>
-        <p className="section-sub">
-          Species I have some reason to care about, arranged by how they are
-          actually related. Branch order comes from the Open Tree of Life;
-          branch <em>lengths</em> mean nothing here. Click a named split to fold
-          it away.
-        </p>
+        <p className="page-eyebrow">{t('tree.eyebrow')}</p>
+        <h1>{t('tree.title')}</h1>
+        <p className="section-sub">{t('tree.intro')}</p>
       </div>
 
       {canEdit && (
@@ -405,10 +471,7 @@ export default function Animals() {
       )}
 
       {!tree && (
-        <p className="tree-empty">
-          Two species is the minimum for a tree. There{' '}
-          {data.species.length === 1 ? 'is one' : 'are none'} so far.
-        </p>
+        <p className="tree-empty">{t('tree.empty', { n: data.species.length })}</p>
       )}
 
       {tree && (
@@ -420,6 +483,7 @@ export default function Animals() {
                 collapsed={collapsed}
                 onNode={onNode}
                 activeId={selected?.id}
+                nameOf={nameOf}
               />
             </ul>
           ) : (
@@ -430,6 +494,7 @@ export default function Animals() {
                 onNode={onNode}
                 activeId={selected?.id}
                 available={available}
+                nameOf={nameOf}
               />
             )
           )}
@@ -519,6 +584,12 @@ export default function Animals() {
                   onChange={(event) => setCommon(event.target.value)}
                   placeholder={`Common name for ${pending.sci}`}
                 />
+                <input
+                  lang="zh-CN"
+                  value={zh}
+                  onChange={(event) => setZh(event.target.value)}
+                  placeholder="中文名"
+                />
                 <button type="button" disabled={busy} onClick={addPending}>
                   Add
                 </button>
@@ -530,24 +601,15 @@ export default function Animals() {
             <h2>On the tree</h2>
             <ul className="tree-species">
               {data.species.map((species) => (
-                <li key={species.ott}>
-                  <span>
-                    {species.common || species.sci}
-                    <em>{species.sci}</em>
-                  </span>
-                  <button
-                    type="button"
-                    disabled={busy}
-                    aria-label={`Remove ${species.sci}`}
-                    onClick={() =>
-                      applySpecies(
-                        data.species.filter((s) => s.ott !== species.ott),
-                      )
-                    }
-                  >
-                    ×
-                  </button>
-                </li>
+                <SpeciesRow
+                  key={species.ott}
+                  species={species}
+                  busy={busy}
+                  onRename={rename}
+                  onRemove={() =>
+                    applySpecies(data.species.filter((s) => s.ott !== species.ott))
+                  }
+                />
               ))}
             </ul>
           </div>

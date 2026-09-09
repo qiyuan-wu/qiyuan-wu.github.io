@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { ALBUMS } from '../albums.js'
 import { useLikes } from '../useLikes.js'
 import { useDocumentTitle } from '../useDocumentTitle.js'
+import { useLanguage } from '../i18n.jsx'
 
 const CHRONOLOGICAL_ALBUMS = [...ALBUMS].sort((a, b) => a.year - b.year)
 
@@ -32,7 +33,8 @@ function AlbumCover({ album, large = false }) {
 }
 
 export default function Albums() {
-  useDocumentTitle('Albums · Qiyuan Wu')
+  const { t } = useLanguage()
+  useDocumentTitle(`${t('albums.title')} · Qiyuan Wu`)
   const [openAlbum, setOpenAlbum] = useState(null)
   const { likes, canEdit, toggle } = useLikes()
 
@@ -53,8 +55,8 @@ export default function Albums() {
   return (
     <section className="page-section albums-page">
       <div className="albums-heading">
-        <p className="albums-eyebrow">On repeat</p>
-        <h1>Albums + comps</h1>
+        <p className="albums-eyebrow">{t('albums.eyebrow')}</p>
+        <h1>{t('albums.title')}</h1>
       </div>
 
       <div className="record-shelf">
@@ -93,7 +95,7 @@ export default function Albums() {
               className="dialog-close"
               type="button"
               onClick={() => setOpenAlbum(null)}
-              aria-label="Close album"
+              aria-label={t('albums.close')}
               autoFocus
             >
               ×
@@ -108,7 +110,7 @@ export default function Albums() {
               <div className="album-dialog-title">
                 <p>{openAlbum.artist}</p>
                 <h2 id="album-dialog-title">{openAlbum.title}</h2>
-                <span>{openAlbum.year} · {openAlbum.tracks.length} songs</span>
+                <span>{openAlbum.year} · {t('albums.songs', { n: openAlbum.tracks.length })}</span>
               </div>
 
               <ol className="track-list">

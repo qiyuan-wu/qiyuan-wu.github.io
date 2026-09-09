@@ -150,6 +150,7 @@ export function buildTree(newick, { species = [], clades = {} } = {}) {
         ott: node.ott,
         sci: entry?.sci ?? node.name,
         common: entry?.common ?? '',
+        zh: entry?.zh ?? '',
         children: [],
         leafCount: 1,
       }

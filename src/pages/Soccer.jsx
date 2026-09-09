@@ -1,16 +1,18 @@
 import Pitch from '../Pitch.jsx'
 import { FORMATION, SUBSTITUTES } from '../dreamXI.js'
 import { useDocumentTitle } from '../useDocumentTitle.js'
+import { useLanguage } from '../i18n.jsx'
 import '../dreamXI.css'
 
 export default function Soccer() {
-  useDocumentTitle('Most Memorable XI · Qiyuan Wu')
+  const { t } = useLanguage()
+  useDocumentTitle(`${t('soccer.title')} · Qiyuan Wu`)
 
   return (
     <section className="page-section dream-page">
       <div className="dream-heading">
-        <p className="page-eyebrow">Formation · {FORMATION}</p>
-        <h1>Most Memorable XI</h1>
+        <p className="page-eyebrow">{t('soccer.formation')} · {FORMATION}</p>
+        <h1>{t('soccer.title')}</h1>
       </div>
 
       <Pitch />
@@ -18,10 +20,10 @@ export default function Soccer() {
       <section className="bench" aria-labelledby="bench-title">
         <div className="bench-head">
           <div>
-            <p className="page-eyebrow">Matchday squad</p>
-            <h2 id="bench-title">Substitutes</h2>
+            <p className="page-eyebrow">{t('soccer.squad')}</p>
+            <h2 id="bench-title">{t('soccer.subs')}</h2>
           </div>
-          <span>7 places</span>
+          <span>{t('soccer.places', { n: SUBSTITUTES.length })}</span>
         </div>
 
         <ol className="bench-list">
@@ -34,7 +36,7 @@ export default function Soccer() {
               ) : (
                 <span className="bench-avatar" aria-hidden="true">+</span>
               )}
-              <span className="bench-name">{player.name || 'Open place'}</span>
+              <span className="bench-name">{player.name || t('soccer.open')}</span>
             </li>
           ))}
         </ol>

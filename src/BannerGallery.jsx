@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { GAMES, bannerUrl, storeUrl } from './games.js'
+import { useLanguage } from './i18n.jsx'
 
 // Map an item's distance from the active (center) item to a position class.
 // Center is big; ±1 are the two smaller banners tucked to each side; ±2 peek
@@ -22,6 +23,7 @@ function positionClass(offset) {
 }
 
 export function BannerGallery() {
+  const { t } = useLanguage()
   const [active, setActive] = useState(0)
   const count = GAMES.length
 
@@ -93,7 +95,7 @@ export function BannerGallery() {
         type="button"
         onClick={() => go(active - 1)}
         disabled={active === 0}
-        aria-label="Previous game"
+        aria-label={t('games.prev')}
       >
         ‹
       </button>
@@ -102,7 +104,7 @@ export function BannerGallery() {
         type="button"
         onClick={() => go(active + 1)}
         disabled={active === count - 1}
-        aria-label="Next game"
+        aria-label={t('games.next')}
       >
         ›
       </button>
@@ -117,7 +119,7 @@ export function BannerGallery() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            View on Steam ↗
+            {t('games.steam')}
           </a>
         </p>
       </div>

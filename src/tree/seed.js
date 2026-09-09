@@ -8,12 +8,12 @@
 // those keys, so labels are carried across by `migrateClades`.
 export const SEED = {
   species: [
-    { ott: 770315, sci: 'Homo sapiens', common: 'Human' },
-    { ott: 417950, sci: 'Pan troglodytes', common: 'Chimpanzee' },
-    { ott: 247333, sci: 'Canis lupus familiaris', common: 'Dog' },
-    { ott: 563166, sci: 'Felis catus', common: 'Cat' },
-    { ott: 913382, sci: 'Pogona vitticeps', common: 'Bearded dragon' },
-    { ott: 75257, sci: 'Amanita muscaria', common: 'Fly agaric' },
+    { ott: 770315, sci: 'Homo sapiens', common: 'Human', zh: '人' },
+    { ott: 417950, sci: 'Pan troglodytes', common: 'Chimpanzee', zh: '黑猩猩' },
+    { ott: 247333, sci: 'Canis lupus familiaris', common: 'Dog', zh: '狗' },
+    { ott: 563166, sci: 'Felis catus', common: 'Cat', zh: '猫' },
+    { ott: 913382, sci: 'Pogona vitticeps', common: 'Bearded dragon', zh: '中部鬃狮蜥' },
+    { ott: 75257, sci: 'Amanita muscaria', common: 'Fly agaric', zh: '毒蝇伞' },
   ],
 
   clades: {

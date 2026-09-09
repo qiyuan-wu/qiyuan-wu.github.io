@@ -9,8 +9,19 @@
   --rank: #ffcf6e;
 
   color-scheme: dark;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Latin comes from the system font; anything it lacks — every Chinese
+     character — falls through to the 楷书, so album titles get it in both
+     languages. Local 楷体 fonts cover the moment before the webfont lands. */
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "LXGW WenKai",
+    "Kaiti SC", "STKaiti", "KaiTi", sans-serif;
   line-height: 1.5;
+}
+
+/* In Chinese the whole page is set in the 楷书, Latin included, so the two
+   scripts share one hand. */
+html[lang="zh-CN"] {
+  font-family: "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", system-ui,
+    sans-serif;
 }
 
 * {
