@@ -21,7 +21,7 @@ const STRINGS = {
     'home.more': 'Elsewhere',
 
     // DRAFT — written from the CV as a placeholder until the real one arrives.
-    'bio.role': 'M.S. student in Aerospace Engineering, UCLA',
+    'bio.role': 'Ph.D. student in Mechanical Engineering, Caltech · from 2026',
     'bio.text':
       'I work on unsteady fluid dynamics — viscous streaming and Lagrangian coherent structures in the SOFIA Laboratory — and on getting quadrotors to plan around the air they fly through. Away from it: sea lions at the California Wildlife Center, old records, and classical Chinese.',
 
@@ -62,7 +62,7 @@ const STRINGS = {
     'home.more': '其他',
 
     // 草稿 — 由简历改写的占位文字，等正式版。
-    'bio.role': '加州大学洛杉矶分校 航空航天工程硕士生',
+    'bio.role': '加州理工学院 机械工程博士生 · 2026 年起',
     'bio.text':
       '研究非定常流体力学——SOFIA 实验室的粘性声流与拉格朗日拟序结构——以及让四旋翼在规划航迹时把气流算进去。之外的时间：在加州野生动物中心照顾海狮，听老唱片，读古文。',
 

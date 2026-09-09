@@ -3,7 +3,7 @@
 export const CV = {
   name: 'Qiyuan Wu',
   contact: [
-    { label: 'GitHub', href: 'https://github.com/qiyuanbillwu', text: 'qiyuanbillwu' },
+    { label: 'GitHub', href: 'https://github.com/qiyuan-wu', text: 'qiyuan-wu' },
     { label: 'Email', href: 'mailto:billwu67@ucla.edu', text: 'billwu67@ucla.edu' },
   ],
   pdf: '/Qiyuan_Wu_CV.pdf',

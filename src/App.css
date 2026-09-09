@@ -1536,11 +1536,21 @@ body.has-dialog {
   max-width: 860px;
 }
 
-/* A CV is Latin text; keep it in the system face even when the site is in Chinese. */
-.cv-body {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  padding-bottom: clamp(32px, 5vw, 56px);
-  border-bottom: 1px solid var(--border);
+.cv-embed {
+  display: block;
+  width: 100%;
+  height: min(1200px, 140vh);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+
+@media (max-width: 720px) {
+  .cv-embed {
+    height: auto;
+    padding: 18px;
+  }
 }
 
 .bio {
@@ -1640,73 +1650,3 @@ body.has-dialog {
   border-color: var(--accent);
 }
 
-.cv-section {
-  padding-top: clamp(22px, 3vw, 34px);
-}
-
-.cv-section h2 {
-  margin: 0 0 14px;
-  color: var(--text-dim);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.cv-entry + .cv-entry {
-  margin-top: 18px;
-}
-
-.cv-entry header {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.cv-entry h3 {
-  margin: 0;
-  font-size: 1.02rem;
-  font-weight: 600;
-}
-
-.cv-where {
-  margin: 2px 0 0;
-  color: var(--text-dim);
-  font-size: 0.9rem;
-}
-
-.cv-when {
-  flex: none;
-  color: var(--text-dim);
-  font-size: 0.86rem;
-  white-space: nowrap;
-}
-
-.cv-entry ul,
-.cv-list {
-  margin: 8px 0 0;
-  padding-left: 1.2em;
-  color: #c9ced8;
-  font-size: 0.94rem;
-  line-height: 1.55;
-}
-
-.cv-entry li + li,
-.cv-list li + li {
-  margin-top: 4px;
-}
-
-.cv-note {
-  color: var(--text-dim);
-}
-
-@media (max-width: 560px) {
-  .cv-entry header {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .cv-when {
-    white-space: normal;
-  }
-}
