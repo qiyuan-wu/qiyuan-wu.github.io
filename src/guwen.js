@@ -330,7 +330,21 @@ export const PERIODS = [
     id: 'qing',
     name: '清',
     span: '1636—1912',
-    authors: [],
+    authors: [
+      {
+        name: '谭嗣同',
+        dates: '1865—1898',
+        pieces: [
+          {
+            title: '狱中题壁',
+            body: [
+              '望门投止思张俭，忍死须臾待杜根。',
+              '我自横刀向天笑，去留肝胆两昆仑。',
+            ],
+          },
+        ],
+      },
+    ],
   },
   {
     id: 'modern',
