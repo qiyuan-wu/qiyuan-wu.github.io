@@ -1597,10 +1597,19 @@ body.has-dialog {
   border-color: var(--accent);
 }
 
+/* The piece itself is written out in the 行楷; the chrome around it — timeline,
+   author cards — stays in the 楷书 so it reads at a glance. */
+.guwen-piece h2,
+.guwen-body {
+  font-family: "Ma Shan Zheng", "STXingkai", "华文行楷", "LXGW WenKai",
+    "Kaiti SC", "STKaiti", "KaiTi", serif;
+}
+
 .guwen-piece h2 {
   margin: 0 0 6px;
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: 700;
+  font-size: clamp(1.7rem, 3.4vw, 2.3rem);
+  /* The brush face comes in one weight; asking for bold only smears it. */
+  font-weight: 400;
   letter-spacing: 0.1em;
   text-align: center;
 }
@@ -1613,8 +1622,8 @@ body.has-dialog {
 }
 
 .guwen-body {
-  font-size: 1.12rem;
-  line-height: 2;
+  font-size: 1.25rem;
+  line-height: 2.1;
 }
 
 .guwen-body p {
