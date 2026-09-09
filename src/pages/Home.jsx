@@ -5,6 +5,7 @@ const SECTIONS = [
   { to: '/albums', label: 'Albums', blurb: 'Records on permanent rotation' },
   { to: '/games', label: 'Games', blurb: 'Favorite worlds and adventures' },
   { to: '/soccer', label: 'Soccer', blurb: 'The players I remember most' },
+  { to: '/tree', label: 'Tree', blurb: 'Species I know, by how they are related' },
 ]
 
 export default function Home() {
