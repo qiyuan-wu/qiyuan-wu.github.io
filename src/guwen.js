@@ -38,15 +38,9 @@ export const PERIODS = [
     ],
   },
   {
-    id: 'qin',
-    name: '秦',
-    span: '前221—前207',
-    authors: [],
-  },
-  {
-    id: 'han',
-    name: '两汉',
-    span: '前202—220',
+    id: 'qinhan',
+    name: '秦汉',
+    span: '前221—220',
     authors: [
       {
         name: '曹操',
