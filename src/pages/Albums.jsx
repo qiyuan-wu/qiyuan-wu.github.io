@@ -34,7 +34,7 @@ function AlbumCover({ album, large = false }) {
 
 export default function Albums() {
   const { t } = useLanguage()
-  useDocumentTitle(`${t('albums.title')} · Qiyuan Wu`)
+  useDocumentTitle(`${t('albums.title')} · ${t('site.name')}`)
   const [openAlbum, setOpenAlbum] = useState(null)
   const { likes, canEdit, toggle } = useLikes()
 

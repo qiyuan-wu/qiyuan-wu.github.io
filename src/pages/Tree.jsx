@@ -45,6 +45,15 @@ function layout(root, collapsed) {
   return { rows, tipCount: nextY, tipDepth }
 }
 
+// Binomials read as *H. sapiens* once the genus has been introduced; on a tree
+// where every tip is a species the genus never needs spelling out twice.
+// Everything after the genus (species, subspecies) stays as written.
+function abbreviate(sci) {
+  const parts = sci.split(' ')
+  if (parts.length < 2) return sci
+  return `${parts[0][0]}. ${parts.slice(1).join(' ')}`
+}
+
 function foldedLabel(node) {
   return node.label || node.candidates?.[0] || 'Clade'
 }
@@ -174,7 +183,7 @@ function Cladogram({ tree, collapsed, onNode, activeId, available, nameOf }) {
               </text>
               {nameOf(row.node) && (
                 <text className="tree-tip-sci" x={px + 12} y={py + 13}>
-                  {row.node.sci}
+                  {abbreviate(row.node.sci)}
                 </text>
               )}
             </g>
@@ -217,7 +226,7 @@ function IndentedTree({ node, collapsed, onNode, activeId, nameOf, depth = 0 }) 
     return (
       <li className="tree-list-tip">
         <span className="tree-list-common">{nameOf(node) || node.sci}</span>
-        {nameOf(node) && <span className="tree-list-sci">{node.sci}</span>}
+        {nameOf(node) && <span className="tree-list-sci">{abbreviate(node.sci)}</span>}
       </li>
     )
   }
@@ -302,7 +311,7 @@ function SpeciesRow({ species, busy, onRename, onRemove }) {
 
 export default function Tree() {
   const { lang, t } = useLanguage()
-  useDocumentTitle(`${t('tree.title')} · Qiyuan Wu`)
+  useDocumentTitle(`${t('tree.title')} · ${t('site.name')}`)
   const { data, tree, canEdit, save } = useTree()
   const narrow = useNarrow()
 
@@ -450,7 +459,6 @@ export default function Tree() {
       <div className="section-head">
         <p className="page-eyebrow">{t('tree.eyebrow')}</p>
         <h1>{t('tree.title')}</h1>
-        <p className="section-sub">{t('tree.intro')}</p>
       </div>
 
       {canEdit && (

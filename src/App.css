@@ -34,6 +34,11 @@
   text-decoration: none;
 }
 
+.brand {
+  font-size: 1.2rem;
+  font-family: "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", serif;
+}
+
 .brand:hover {
   border-color: var(--accent);
 }
@@ -887,11 +892,6 @@ body.has-dialog {
   max-width: none;
 }
 
-.tree-page .section-sub {
-  max-width: 60ch;
-  margin: 0 auto;
-}
-
 .tree-page .tree-toolbar,
 .tree-page .tree-editor,
 .tree-page .tree-empty {
@@ -952,10 +952,19 @@ body.has-dialog {
   font-weight: 600;
 }
 
+/* Scientific names are set in a Latin face with a true italic, in both
+   languages — the 楷书 has no italic and a synthesized slant looks amateur. */
+.tree-tip-sci,
+.tree-list-sci,
+.tree-species em,
+.tree-matches em {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-style: italic;
+}
+
 .tree-tip-sci {
   fill: var(--text-dim);
   font-size: 11.5px;
-  font-style: italic;
 }
 
 .tree-folded-name {

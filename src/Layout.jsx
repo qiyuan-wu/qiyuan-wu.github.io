@@ -16,8 +16,8 @@ export default function Layout() {
   return (
     <div className="site">
       <header className="site-nav">
-        <NavLink to="/" className="brand" end>
-          QW
+        <NavLink to="/" className="brand" end lang="zh-CN">
+          吴
         </NavLink>
         <nav className="site-links">
           {SECTIONS.map((s) => (

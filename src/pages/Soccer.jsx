@@ -6,7 +6,7 @@ import '../dreamXI.css'
 
 export default function Soccer() {
   const { t } = useLanguage()
-  useDocumentTitle(`${t('soccer.title')} · Qiyuan Wu`)
+  useDocumentTitle(`${t('soccer.title')} · ${t('site.name')}`)
 
   return (
     <section className="page-section dream-page">

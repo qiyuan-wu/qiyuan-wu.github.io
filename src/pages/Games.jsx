@@ -4,7 +4,7 @@ import { useLanguage } from '../i18n.jsx'
 
 export default function Games() {
   const { t } = useLanguage()
-  useDocumentTitle(`${t('games.title')} · Qiyuan Wu`)
+  useDocumentTitle(`${t('games.title')} · ${t('site.name')}`)
 
   return (
     <section className="page-section games-page">

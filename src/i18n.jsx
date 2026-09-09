@@ -5,11 +5,12 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 // are proper nouns and stay as written. The owner-only editors stay English.
 const STRINGS = {
   en: {
+    'site.name': 'Qiyuan Wu',
     'nav.albums': 'Albums',
     'nav.games': 'Games',
     'nav.soccer': 'Soccer',
     'nav.tree': 'Tree',
-    'nav.switch': '中文',
+    'nav.switch': '中',
     'nav.switchLabel': 'Switch to Chinese',
 
     'home.eyebrow': 'Personal archive',
@@ -38,18 +39,17 @@ const STRINGS = {
 
     'tree.title': 'Tree',
     'tree.eyebrow': 'However far back it goes',
-    'tree.intro':
-      'Species I have some reason to care about, arranged by how they are actually related. Branch order comes from the Open Tree of Life; branch lengths mean nothing here. Click a named split to fold it away.',
     'tree.empty': 'Two species is the minimum for a tree. There are {n} so far.',
 
     'notfound.title': 'Not found',
     'notfound.back': 'Back home →',
   },
   zh: {
+    'site.name': '吴其远',
     'nav.albums': '唱片',
     'nav.games': '游戏',
     'nav.soccer': '足球',
-    'nav.tree': '生命树',
+    'nav.tree': '演化树',
     'nav.switch': 'EN',
     'nav.switchLabel': '切换到英文',
 
@@ -77,10 +77,8 @@ const STRINGS = {
     'soccer.places': '{n} 个席位',
     'soccer.open': '空位',
 
-    'tree.title': '生命树',
+    'tree.title': '演化树',
     'tree.eyebrow': '无论追溯多远',
-    'tree.intro':
-      '我有理由在意的物种，按它们真实的亲缘关系排列。分支顺序来自 Open Tree of Life；分支的长短在这里没有意义。点击一个有名字的分叉可以把它折叠起来。',
     'tree.empty': '至少要两个物种才能成树，目前有 {n} 个。',
 
     'notfound.title': '页面不存在',

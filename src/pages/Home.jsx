@@ -10,14 +10,14 @@ const SECTIONS = [
 ]
 
 export default function Home() {
-  useDocumentTitle('Qiyuan Wu')
   const { t } = useLanguage()
+  useDocumentTitle(t('site.name'))
 
   return (
     <section className="home">
       <div className="home-heading">
         <p className="page-eyebrow">{t('home.eyebrow')}</p>
-        <h1>Qiyuan Wu</h1>
+        <h1>{t('site.name')}</h1>
       </div>
 
       <div className="home-cards">

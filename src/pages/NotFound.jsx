@@ -4,7 +4,7 @@ import { useLanguage } from '../i18n.jsx'
 
 export default function NotFound() {
   const { t } = useLanguage()
-  useDocumentTitle(`${t('notfound.title')} · Qiyuan Wu`)
+  useDocumentTitle(`${t('notfound.title')} · ${t('site.name')}`)
 
   return (
     <section className="page-section">
