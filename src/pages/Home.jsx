@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { CV } from '../cv.js'
+import { PdfView } from '../PdfView.jsx'
 import { useDocumentTitle } from '../useDocumentTitle.js'
 import { useLanguage } from '../i18n.jsx'
 
@@ -39,13 +40,8 @@ export default function Home() {
         </div>
       </header>
 
-      {/* The PDF itself, so there is one CV and not two that drift. Phones
-          mostly refuse to render a PDF inline, so they get the button. */}
-      <object className="cv-embed" data={CV.pdf} type="application/pdf" aria-label="CV">
-        <a className="cv-pdf" href={CV.pdf} download>
-          {t('cv.pdf')}
-        </a>
-      </object>
+      {/* The PDF itself, so there is one CV and not two that drift. */}
+      <PdfView src={CV.pdf} />
 
       <nav className="home-more" aria-label={t('home.more')}>
         <h2>{t('home.more')}</h2>

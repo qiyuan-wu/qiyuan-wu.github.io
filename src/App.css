@@ -1536,21 +1536,31 @@ body.has-dialog {
   max-width: 860px;
 }
 
-.cv-embed {
-  display: block;
-  width: 100%;
-  height: min(1200px, 140vh);
+.pdf-view {
   border: 1px solid var(--border);
   border-radius: 14px;
   background: var(--surface);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
 }
 
-@media (max-width: 720px) {
-  .cv-embed {
-    height: auto;
-    padding: 18px;
-  }
+.pdf-view.is-loading {
+  min-height: 320px;
+}
+
+.pdf-view.is-failed {
+  display: none;
+}
+
+.pdf-pages {
+  display: grid;
+  gap: 1px;
+  background: var(--border);
+}
+
+.pdf-pages canvas {
+  display: block;
+  background: #fff;
 }
 
 .bio {
