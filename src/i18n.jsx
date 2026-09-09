@@ -5,7 +5,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 // are proper nouns and stay as written. The owner-only editors stay English.
 const STRINGS = {
   en: {
-    'site.name': 'Qiyuan Wu',
+    'site.name': 'Qiyuan (Bill) Wu',
     'nav.home': 'Research',
     'nav.interests': 'Interests',
     'nav.projects': 'Old projects',
@@ -32,7 +32,19 @@ const STRINGS = {
     // DRAFT — written from the CV as a placeholder until the real one arrives.
     'bio.role': 'Ph.D. student in Mechanical Engineering, Caltech · from 2026',
     'bio.text':
-      'I work on unsteady fluid dynamics — viscous streaming and Lagrangian coherent structures in the SOFIA Laboratory — and on getting quadrotors to plan around the air they fly through. Away from it: sea lions at the California Wildlife Center, old records, and classical Chinese.',
+      'I’m interested in unsteady flow physics and computation, as well as analytical mechanics and dynamical systems. Outside fluid mechanics, I’m interested in evolutionary biology.',
+
+    'research.title': 'Research',
+    'research.code': 'Code',
+    'research.lcs.title': 'Lagrangian coherent structures',
+    'research.lcs.text':
+      'FTLE and LAVD fields for unsteady flows computed with the immersed layers method, used to find transport barriers and to pull the leading-edge vortex out of a pitching plate. Shipped as part of ILMPostProcessing.jl.',
+    'research.uav.title': 'Quadrotor trajectory optimization',
+    'research.uav.text':
+      'Started as the MAE 157A capstone — a quadrotor built from CAD up, flying minimum-snap trajectories — and became direct-collocation optimal control: minimum-time maneuvers solved with IPOPT, and waypoint timing tuned by gradient descent.',
+    'research.streaming.title': 'Viscous streaming',
+    'research.streaming.text':
+      'Oscillating bodies drive a steady mean flow that traps and carries inertial particles. Recasting the equations in time-harmonic form and solving them with finite elements predicts the mean particle paths without marching through the oscillations. M.S. thesis, 2026.',
 
     'albums.title': 'Albums + comps',
     'albums.songs': '{n} songs',
@@ -84,7 +96,19 @@ const STRINGS = {
     // 草稿 — 由简历改写的占位文字，等正式版。
     'bio.role': '加州理工学院 机械工程博士生 · 2026 年起',
     'bio.text':
-      '研究非定常流体力学——SOFIA 实验室的粘性声流与拉格朗日拟序结构——以及让四旋翼在规划航迹时把气流算进去。之外的时间：在加州野生动物中心照顾海狮，听老唱片，读古文。',
+      '我关注非定常流动的物理与计算，也关注分析力学与动力系统。流体力学之外，我对演化生物学感兴趣。',
+
+    'research.title': '研究',
+    'research.code': '代码',
+    'research.lcs.title': '拉格朗日拟序结构',
+    'research.lcs.text':
+      '用浸入层方法计算非定常流动的 FTLE 与 LAVD 场，识别输运屏障，并从俯仰平板的流场中提取前缘涡。成果并入 ILMPostProcessing.jl。',
+    'research.uav.title': '四旋翼轨迹优化',
+    'research.uav.text':
+      '始于 MAE 157A 课程设计——从 CAD 开始造一架四旋翼，飞最小 snap 轨迹——后来发展为直接配点法最优控制：用 IPOPT 求解最短时间机动，用梯度下降调航点时间分配。',
+    'research.streaming.title': '粘性声流',
+    'research.streaming.text':
+      '振荡物体驱动稳定的平均流，能捕获并输运惯性颗粒。把方程改写成时谐形式并用有限元求解，不必逐周期推进即可预测颗粒的平均轨迹。硕士论文，2026。',
 
     'albums.title': '专辑与合辑',
     'albums.songs': '{n} 首',

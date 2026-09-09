@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { CV } from '../cv.js'
+import { RESEARCH } from '../research.js'
 import { useDocumentTitle } from '../useDocumentTitle.js'
 import { useLanguage } from '../i18n.jsx'
 
@@ -27,6 +28,36 @@ export default function Home() {
           </p>
         </div>
       </header>
+
+      <section className="research" aria-labelledby="research-title">
+        <h2 id="research-title">{t('research.title')}</h2>
+        {RESEARCH.map((r) => (
+          <article key={r.id} className="research-item">
+            <header className="research-head">
+              <h3>{t(`research.${r.id}.title`)}</h3>
+              <span className="research-years">{r.years}</span>
+            </header>
+            <p className="research-where">{r.where}</p>
+            <p className="research-text">{t(`research.${r.id}.text`)}</p>
+            <div className="research-media">
+              {r.media.map((m) => (
+                <figure key={m.src}>
+                  <img src={m.src} alt={m.caption} loading="lazy" />
+                  <figcaption>{m.caption}</figcaption>
+                </figure>
+              ))}
+            </div>
+            <p className="research-links">
+              <span>{t('research.code')}</span>
+              {r.links.map((l) => (
+                <a key={l.href} href={l.href} target="_blank" rel="noreferrer">
+                  {l.label} ↗
+                </a>
+              ))}
+            </p>
+          </article>
+        ))}
+      </section>
 
       <footer className="home-more">
         <Link to="/interests" className="home-more-link">
