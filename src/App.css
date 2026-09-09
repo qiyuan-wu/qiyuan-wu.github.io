@@ -1636,6 +1636,12 @@ body.has-dialog {
   margin-left: 0.3em;
 }
 
+.guwen-note-ghost {
+  visibility: hidden;
+  margin-left: 0;
+  margin-right: 0.3em;
+}
+
 /* ---- CV ---------------------------------------------------------------- */
 
 .bio-page {
