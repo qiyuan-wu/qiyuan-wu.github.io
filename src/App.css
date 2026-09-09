@@ -1006,6 +1006,23 @@ body.has-dialog {
   font-weight: 500;
 }
 
+/* An observation of my own. Dim until you look for it — the tree is about
+   ancestry first, and this is a footnote saying I have met this one. */
+.tree-inat {
+  cursor: pointer;
+}
+
+.tree-inat text {
+  fill: var(--text-dim);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.tree-inat:hover text,
+.tree-inat:focus-visible text {
+  fill: var(--accent);
+}
+
 .tree-triangle {
   fill: var(--surface-hover);
   stroke: var(--border);
@@ -1100,7 +1117,23 @@ body.has-dialog {
 }
 
 .tree-list-tip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   padding: 6px 0 6px 10px;
+}
+
+.tree-list-inat {
+  flex: none;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+}
+
+.tree-list-inat:hover {
+  color: var(--accent);
 }
 
 .tree-list-common {
@@ -1263,6 +1296,21 @@ body.has-dialog {
   color: var(--text-dim);
   font-size: 0.9rem;
   font-style: italic;
+}
+
+/* What iNaturalist made of this species, under the name Open Tree gave it. */
+.tree-species-inat {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 2px;
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.tree-species-inat em {
+  font-size: inherit;
 }
 
 .tree-species button {

@@ -63,17 +63,16 @@ export function useTrees() {
     })
   }
 
-  // A species is named once. Renaming it here updates every tree it sits on.
-  const renameEverywhere = async (species) => {
+  // Several trees, one write. What a species is called and how often it has
+  // been observed belong to the species, not to a tree, so both land on every
+  // tree the species sits on at once.
+  const saveMany = async (updates) => {
+    const entries = Object.entries(updates)
+    if (!entries.length) return
     const batch = writeBatch(db)
-    const next = {}
-    for (const [id, d] of Object.entries(docs)) {
-      if (!d.species?.some((s) => s.ott === species.ott)) continue
-      next[id] = { ...d, species: d.species.map((s) => (s.ott === species.ott ? species : s)) }
-      batch.set(doc(db, 'tree', id), next[id])
-    }
+    for (const [id, next] of entries) batch.set(doc(db, 'tree', id), next)
     const previous = docs
-    setDocs((current) => ({ ...current, ...next }))
+    setDocs((current) => ({ ...current, ...updates }))
     try {
       await batch.commit()
     } catch (error) {
@@ -82,5 +81,24 @@ export function useTrees() {
     }
   }
 
-  return { docs, focusTrees, canEdit: isOwner(user), save, remove, renameEverywhere }
+  // A species is named once. Renaming it here updates every tree it sits on.
+  const renameEverywhere = (species) =>
+    saveMany(
+      Object.fromEntries(
+        Object.entries(docs)
+          .filter(([, d]) => d.species?.some((s) => s.ott === species.ott))
+          .map(([id, d]) => [
+            id,
+            {
+              ...d,
+              // A rename must not clobber what the last iNaturalist sync found.
+              species: d.species.map((s) =>
+                s.ott === species.ott ? { ...s, ...species } : s,
+              ),
+            },
+          ]),
+      ),
+    )
+
+  return { docs, focusTrees, canEdit: isOwner(user), save, saveMany, remove, renameEverywhere }
 }

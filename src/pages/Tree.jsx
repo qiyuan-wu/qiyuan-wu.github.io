@@ -5,6 +5,7 @@ import { useLanguage } from '../i18n.jsx'
 import { useTrees } from '../useTrees.js'
 import { buildTree, migrateClades } from '../tree/newick.js'
 import { inducedNewick, lineageOf, matchClade, matchSpecies } from '../tree/opentree.js'
+import { countsFor, matchTaxon, observationsUrl } from '../tree/inat.js'
 
 const ROW = 48 // one tip, two lines of label
 const COL_MIN = 64 // columns shrink to fit the screen, but no further than this
@@ -87,7 +88,32 @@ function useWidth(ref) {
   return width
 }
 
-function Cladogram({ tree, collapsed, onNode, activeId, available, nameOf, focusFor, onOpen }) {
+// A species I have actually met. The badge is right-aligned in the label
+// column so the counts read as their own quiet column rather than trailing
+// names of every different length.
+function InatBadge({ node, login, x, y, className }) {
+  const count = node.inat?.count ?? 0
+  if (!login || !count) return null
+  return (
+    <a
+      className={className}
+      href={observationsUrl(login, node.inat.id)}
+      target="_blank"
+      rel="noreferrer"
+    >
+      <title>
+        {count === 1
+          ? 'One observation of mine on iNaturalist'
+          : `${count} observations of mine on iNaturalist`}
+      </title>
+      <text x={x} y={y} textAnchor="end">
+        ↗ {count}
+      </text>
+    </a>
+  )
+}
+
+function Cladogram({ tree, collapsed, onNode, activeId, available, nameOf, focusFor, onOpen, inatUser }) {
   const { rows, tipCount, tipDepth } = useMemo(
     () => layout(tree, collapsed),
     [tree, collapsed],
@@ -187,6 +213,13 @@ function Cladogram({ tree, collapsed, onNode, activeId, available, nameOf, focus
                   {abbreviate(row.node.sci)}
                 </text>
               )}
+              <InatBadge
+                className="tree-inat"
+                node={row.node}
+                login={inatUser}
+                x={plotW + LABEL_W - 6}
+                y={py + 4}
+              />
             </g>
           )
         }
@@ -240,12 +273,24 @@ function Cladogram({ tree, collapsed, onNode, activeId, available, nameOf, focus
 // The same tree, minus the geometry. Narrow screens have no room for a column
 // of tips 500px to the right of the root, and indentation carries the nesting
 // on its own.
-function IndentedTree({ node, collapsed, onNode, activeId, nameOf, focusFor, depth = 0 }) {
+function IndentedTree({ node, collapsed, onNode, activeId, nameOf, focusFor, inatUser, depth = 0 }) {
   if (!node.children.length) {
     return (
       <li className="tree-list-tip">
-        <span className="tree-list-common">{nameOf(node) || node.sci}</span>
-        {nameOf(node) && <span className="tree-list-sci">{abbreviate(node.sci)}</span>}
+        <span>
+          <span className="tree-list-common">{nameOf(node) || node.sci}</span>
+          {nameOf(node) && <span className="tree-list-sci">{abbreviate(node.sci)}</span>}
+        </span>
+        {inatUser && node.inat?.count > 0 && (
+          <a
+            className="tree-list-inat"
+            href={observationsUrl(inatUser, node.inat.id)}
+            target="_blank"
+            rel="noreferrer"
+          >
+            ↗ {node.inat.count}
+          </a>
+        )}
       </li>
     )
   }
@@ -279,6 +324,7 @@ function IndentedTree({ node, collapsed, onNode, activeId, nameOf, focusFor, dep
               activeId={activeId}
               nameOf={nameOf}
               focusFor={focusFor}
+              inatUser={inatUser}
               depth={depth + 1}
             />
           ))}
@@ -303,9 +349,20 @@ function SpeciesRow({ species, busy, onRename, onRemove }) {
     if (event.key === 'Enter') event.currentTarget.blur()
   }
 
+  // iNaturalist's own name for the species is worth showing when it disagrees
+  // with Open Tree's, since that is the one moment a wrong match is visible.
+  const inat = species.inat
   return (
     <li>
-      <em>{species.sci}</em>
+      <div className="tree-species-name">
+        <em>{species.sci}</em>
+        {inat && (
+          <span className="tree-species-inat">
+            {inat.name !== species.sci && <em>{inat.name}</em>}
+            {inat.count > 0 ? `↗ ${inat.count}` : 'no observations'}
+          </span>
+        )}
+      </div>
       <input
         value={common}
         onChange={(event) => setCommon(event.target.value)}
@@ -377,11 +434,46 @@ function TreeNames({ data, busy, onSave }) {
   )
 }
 
+// The iNaturalist account the counts belong to. It is one account for the whole
+// site, so it lives on the main tree and every focus tree reads it from there.
+function InatPanel({ login, busy, onSaveLogin, onSync }) {
+  const [value, setValue] = useState(login)
+  const commit = () => {
+    if (value.trim() !== login) onSaveLogin(value.trim())
+  }
+  return (
+    <div className="tree-panel">
+      <h2>iNaturalist</h2>
+      <p className="tree-panel-sub">
+        A species you have observed gets a link to your observations of it.
+        Syncing is the only time this page talks to iNaturalist — the counts are
+        stored, so nobody waits on it to see the tree.
+      </p>
+      <div className="tree-row">
+        <input
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+          onBlur={commit}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') event.currentTarget.blur()
+          }}
+          placeholder="iNaturalist username"
+          aria-label="iNaturalist username"
+          disabled={busy}
+        />
+        <button type="button" disabled={busy || !login} onClick={onSync}>
+          Sync observations
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export default function Tree() {
   const { lang, t } = useLanguage()
   const { id = 'global' } = useParams()
   const navigate = useNavigate()
-  const { docs, focusTrees, canEdit, save, remove, renameEverywhere } = useTrees()
+  const { docs, focusTrees, canEdit, save, saveMany, remove, renameEverywhere } = useTrees()
   const narrow = useNarrow()
 
   const data = docs[id]
@@ -411,6 +503,11 @@ export default function Tree() {
   // Chinese readers get the Chinese name where one has been filled in, and the
   // English one until then — a half-translated tree beats a half-empty one.
   const nameOf = (node) => (lang === 'zh' && node.zh) || node.common || ''
+
+  // One iNaturalist account for the site, kept on the main tree. Clearing it
+  // takes every badge off every tree without touching the counts themselves.
+  const inatUser = (docs.global?.inatUser ?? '').trim()
+
   const canvasRef = useRef(null)
   const available = useWidth(canvasRef)
 
@@ -632,6 +729,70 @@ export default function Tree() {
     }
   }
 
+  // One sync covers the whole site. A species' taxon id is looked up once and
+  // then remembered, so a second sync is a single request no matter how many
+  // species there are; only the counts move.
+  const syncInat = async () => {
+    const login = inatUser
+    if (!login) return
+    setBusy(true)
+    setStatus('')
+    try {
+      const species = new Map()
+      for (const d of Object.values(docs)) {
+        for (const s of d.species ?? []) if (!species.has(s.ott)) species.set(s.ott, s)
+      }
+
+      const taxa = new Map() // ott -> iNaturalist taxon
+      let unmatched = 0
+      for (const s of species.values()) {
+        if (s.inat?.id) {
+          taxa.set(s.ott, { id: s.inat.id, name: s.inat.name })
+          continue
+        }
+        // One at a time: iNaturalist asks for a polite pace, and this only
+        // happens for species it has never been asked about.
+        const hit = await matchTaxon(s.sci)
+        if (hit) taxa.set(s.ott, hit)
+        else unmatched += 1
+      }
+
+      const counts = await countsFor(login, [...new Set([...taxa.values()].map((t) => t.id))])
+
+      const updates = {}
+      for (const [treeId, d] of Object.entries(docs)) {
+        if (!d.species?.length) continue
+        updates[treeId] = {
+          ...d,
+          species: d.species.map((s) => {
+            const taxon = taxa.get(s.ott)
+            if (!taxon) {
+              const { inat, ...rest } = s // eslint-disable-line no-unused-vars
+              return rest
+            }
+            return { ...s, inat: { ...taxon, count: counts.get(taxon.id) ?? 0 } }
+          }),
+        }
+      }
+      await saveMany(updates)
+
+      const observed = [...taxa.values()].filter((t) => counts.get(t.id) > 0).length
+      const total = [...counts.values()].reduce((sum, n) => sum + n, 0)
+      setStatus(
+        [
+          `${observed} of ${species.size} species observed, ${total} observations in all.`,
+          unmatched > 0 && `${unmatched} not found on iNaturalist.`,
+        ]
+          .filter(Boolean)
+          .join(' '),
+      )
+    } catch (error) {
+      setStatus(error.message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
   const saveLabel = async (value) => {
     if (!selected) return
     const clades = { ...(data.clades ?? {}) }
@@ -713,6 +874,7 @@ export default function Tree() {
                 activeId={selected?.id}
                 nameOf={nameOf}
                 focusFor={focusFor}
+                inatUser={inatUser}
               />
             </ul>
           ) : (
@@ -726,6 +888,7 @@ export default function Tree() {
                 nameOf={nameOf}
                 focusFor={focusFor}
                 onOpen={(focus) => navigate(`/tree/${focus.id}`)}
+                inatUser={inatUser}
               />
             )
           )}
@@ -844,6 +1007,18 @@ export default function Tree() {
               ))}
             </ul>
           </div>
+
+          <InatPanel
+            key={inatUser}
+            login={inatUser}
+            busy={busy}
+            onSaveLogin={(value) =>
+              save('global', { ...docs.global, inatUser: value }).catch((error) =>
+                setStatus(error.message),
+              )
+            }
+            onSync={syncInat}
+          />
 
           {!isFocus && (
             <div className="tree-panel">
