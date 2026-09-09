@@ -11,7 +11,6 @@ export default function Interests() {
     <section className="page-section interests-page">
       <div className="section-head">
         <h1>{t('nav.interests')}</h1>
-        <p className="section-sub">{t('interests.sub')}</p>
       </div>
       <div className="home-cards">
         {INTERESTS.map((s, index) => (

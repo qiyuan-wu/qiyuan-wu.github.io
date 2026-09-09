@@ -20,7 +20,6 @@ const STRINGS = {
 
     'projects.title': 'Old projects',
     'projects.sub': 'Robots and other things built before university.',
-    'interests.sub': 'The rest of the site: what I read, listen to, play, and follow.',
     'cv.pdf': 'Download CV',
     'cv.research': 'Research',
     'cv.education': 'Education',
@@ -84,7 +83,6 @@ const STRINGS = {
 
     'projects.title': '旧项目',
     'projects.sub': '上大学之前做的机器人和其他东西。',
-    'interests.sub': '网站的其余部分：读的、听的、玩的、看的。',
     'cv.pdf': '下载简历',
     'cv.research': '研究',
     'cv.education': '教育',
