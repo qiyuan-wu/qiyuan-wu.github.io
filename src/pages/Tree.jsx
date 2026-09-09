@@ -341,6 +341,42 @@ const slug = (name) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
 
+// A focus tree's names, edited in place and saved on blur, like a species row.
+function TreeNames({ data, busy, onSave }) {
+  const [name, setName] = useState(data.name ?? '')
+  const [zh, setZh] = useState(data.zh ?? '')
+  const commit = () => {
+    if (name.trim() === (data.name ?? '') && zh.trim() === (data.zh ?? '')) return
+    onSave({ ...data, name: name.trim() || data.root.name, zh: zh.trim() })
+  }
+  const blurOnEnter = (event) => {
+    if (event.key === 'Enter') event.currentTarget.blur()
+  }
+  return (
+    <div className="tree-row">
+      <input
+        value={name}
+        onChange={(event) => setName(event.target.value)}
+        onBlur={commit}
+        onKeyDown={blurOnEnter}
+        placeholder="Name"
+        aria-label="Tree name"
+        disabled={busy}
+      />
+      <input
+        lang="zh-CN"
+        value={zh}
+        onChange={(event) => setZh(event.target.value)}
+        onBlur={commit}
+        onKeyDown={blurOnEnter}
+        placeholder="中文名"
+        aria-label="Chinese tree name"
+        disabled={busy}
+      />
+    </div>
+  )
+}
+
 export default function Tree() {
   const { lang, t } = useLanguage()
   const { id = 'global' } = useParams()
@@ -871,7 +907,14 @@ export default function Tree() {
               <h2>This tree</h2>
               <p className="tree-panel-sub">
                 Rooted in <em>{data.root.name}</em>. Only species inside it can be added.
+                Names save when you leave the field.
               </p>
+              <TreeNames
+                key={`${data.name}|${data.zh}`}
+                data={data}
+                busy={busy}
+                onSave={(next) => save(id, next).catch((error) => setStatus(error.message))}
+              />
               <button type="button" className="tree-danger" disabled={busy} onClick={deleteTree}>
                 Delete this tree
               </button>

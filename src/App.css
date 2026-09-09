@@ -1705,5 +1705,6 @@ body.has-dialog {
 }
 
 .tree-danger {
+  margin-top: 12px;
   color: #f0866f;
 }
