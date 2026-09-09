@@ -120,15 +120,9 @@ export const PERIODS = [
     authors: [],
   },
   {
-    id: 'sui',
-    name: '隋',
-    span: '581—618',
-    authors: [],
-  },
-  {
-    id: 'tang',
-    name: '唐',
-    span: '618—907',
+    id: 'suitang',
+    name: '隋唐',
+    span: '581—907',
     authors: [
       {
         name: '王勃',
