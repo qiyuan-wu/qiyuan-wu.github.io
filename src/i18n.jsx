@@ -6,6 +6,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 const STRINGS = {
   en: {
     'site.name': 'Qiyuan Wu',
+    'nav.cv': 'CV',
     'nav.projects': 'Projects',
     'nav.guwen': '古文',
     'nav.albums': 'Albums',
@@ -17,6 +18,8 @@ const STRINGS = {
 
 
     'projects.title': 'Projects',
+    'cv.title': 'CV',
+    'cv.pdf': 'Download PDF',
 
     'albums.title': 'Albums + comps',
     'albums.songs': '{n} songs',
@@ -40,6 +43,7 @@ const STRINGS = {
   },
   zh: {
     'site.name': '吴其远',
+    'nav.cv': '简历',
     'nav.projects': '项目',
     'nav.guwen': '古文',
     'nav.albums': '唱片',
@@ -51,6 +55,8 @@ const STRINGS = {
 
 
     'projects.title': '项目',
+    'cv.title': '简历',
+    'cv.pdf': '下载 PDF',
 
     'albums.title': '专辑与合辑',
     'albums.songs': '{n} 首',

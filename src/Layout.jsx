@@ -4,6 +4,7 @@ import { useLanguage } from './i18n.jsx'
 // Section links live here so adding a page later is one entry. `end` on the
 // home link keeps it from staying active on every route.
 const SECTIONS = [
+  { to: '/cv', label: 'nav.cv' },
   { to: '/projects', label: 'nav.projects' },
   { to: '/guwen', label: 'nav.guwen' },
   { to: '/albums', label: 'nav.albums' },
