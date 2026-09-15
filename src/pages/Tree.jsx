@@ -404,7 +404,7 @@ function TreeNames({ data, busy, onSave }) {
   const [zh, setZh] = useState(data.zh ?? '')
   const commit = () => {
     if (name.trim() === (data.name ?? '') && zh.trim() === (data.zh ?? '')) return
-    onSave({ ...data, name: name.trim() || data.root.name, zh: zh.trim() })
+    onSave({ ...data, name: name.trim() || data.root?.name || data.name, zh: zh.trim() })
   }
   const blurOnEnter = (event) => {
     if (event.key === 'Enter') event.currentTarget.blur()
@@ -495,7 +495,7 @@ export default function Tree() {
     if (isFocus || !node.children?.length) return null
     return (
       focusTrees.find(
-        (f) => node.label === f.root.name || node.candidates?.includes(f.root.name),
+        (f) => f.root && (node.label === f.root.name || node.candidates?.includes(f.root.name)),
       ) ?? null
     )
   }
@@ -627,8 +627,8 @@ export default function Tree() {
       setStatus(`${pending.sci} is already on the tree.`)
       return
     }
-    // A focus tree is rooted in a clade; only members get in.
-    if (isFocus) {
+    // A tree rooted in a clade takes only members. An unrooted one takes anything.
+    if (data.root) {
       setBusy(true)
       try {
         const lineage = await lineageOf(pending.ott)
@@ -695,25 +695,42 @@ export default function Tree() {
     }
   }
 
-  // A focus tree starts with whatever the main tree already holds inside the
-  // clade; its labels come along because they are keyed by tip set.
+  // A tree rooted in a clade starts with whatever the main tree already holds
+  // inside it; its labels come along because they are keyed by tip set. An
+  // unrooted tree starts empty and takes taxa of any rank.
   const createTree = async () => {
-    if (!cladeRoot) return
-    const newId = slug(cladeRoot.name)
+    const name = newName.trim() || cladeRoot?.name || ''
+    if (!name) {
+      setStatus('Give the tree a name.')
+      return
+    }
+    const newId = slug(name)
+    if (!newId || newId === 'global') {
+      setStatus('Pick a different name.')
+      return
+    }
     if (docs[newId]) {
-      setStatus(`There is already a tree for ${cladeRoot.name}.`)
+      setStatus(`There is already a tree called ${docs[newId].name}.`)
       return
     }
     setBusy(true)
     setStatus('')
     try {
+      if (!cladeRoot) {
+        await save(newId, { name, zh: newZh.trim(), species: [], newick: '', clades: {} })
+        setNewName('')
+        setNewZh('')
+        setEditing(true)
+        navigate(`/tree/${newId}`)
+        return
+      }
       const main = docs.global
       const lineages = await Promise.all(main.species.map((s) => lineageOf(s.ott).catch(() => [])))
       const species = main.species.filter((s, i) => lineages[i].includes(cladeRoot.ott))
       const newick = species.length >= 2 ? (await inducedNewick(species.map((s) => s.ott))).newick : ''
       const clades = migrateClades(main.clades, buildTree(newick, { species, clades: {} }))
       await save(newId, {
-        name: newName.trim() || cladeRoot.name,
+        name,
         zh: newZh.trim(),
         root: { ott: cladeRoot.ott, name: cladeRoot.name },
         species,
@@ -852,7 +869,7 @@ export default function Tree() {
           {focusTrees.map((f) => (
             <NavLink key={f.id} to={`/tree/${f.id}`}>
               {treeName(f)}
-              {treeName(f) !== f.root.name && <em>{f.root.name}</em>}
+              {f.root && treeName(f) !== f.root.name && <em>{f.root.name}</em>}
             </NavLink>
           ))}
           {canEdit && (
@@ -960,12 +977,20 @@ export default function Tree() {
           )}
 
           <div className="tree-panel">
-            <h2>Add a species</h2>
+            <h2>{data.root || !isFocus ? 'Add a species' : 'Add a taxon'}</h2>
+            {isFocus && !data.root && (
+              <p className="tree-panel-sub">
+                Any rank works here — a species, or a whole group such as
+                Bacteria, Archaea, Fungi or Metazoa.
+              </p>
+            )}
             <form className="tree-row" onSubmit={search}>
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Scientific or common name"
+                placeholder={
+                  isFocus && !data.root ? 'Bacteria, Fungi, Homo sapiens…' : 'Scientific or common name'
+                }
               />
               <button type="submit" disabled={busy}>
                 Search
@@ -1043,20 +1068,43 @@ export default function Tree() {
 
           {!isFocus && (
             <div className="tree-panel" ref={newTreeRef}>
-              <h2>New focus tree</h2>
+              <h2>New tree</h2>
               <p className="tree-panel-sub">
-                Rooted in a clade. It starts with whatever the main tree already
-                holds inside that clade, and can take species the main tree does not show.
+                Name it and create it, and it starts empty: its tips can be taxa
+                of any rank — Bacteria, Archaea, Fungi, Metazoa, a single species.
+                Or root it in a clade first, and it starts with whatever the main
+                tree already holds there and only takes members.
               </p>
+              <div className="tree-row">
+                <input
+                  value={newName}
+                  onChange={(event) => setNewName(event.target.value)}
+                  placeholder="Name — Domains of life, Kingdoms…"
+                />
+                <input
+                  lang="zh-CN"
+                  value={newZh}
+                  onChange={(event) => setNewZh(event.target.value)}
+                  placeholder="中文名"
+                />
+                <button type="button" disabled={busy} onClick={createTree}>
+                  {cladeRoot ? `Create in ${cladeRoot.name}` : 'Create'}
+                </button>
+              </div>
               <form className="tree-row" onSubmit={searchClade}>
                 <input
                   value={cladeQuery}
                   onChange={(event) => setCladeQuery(event.target.value)}
-                  placeholder="Clade — Primates, Carnivora, Squamata…"
+                  placeholder="Optional root clade — Primates, Carnivora, Squamata…"
                 />
                 <button type="submit" disabled={busy}>
                   Search
                 </button>
+                {cladeRoot && (
+                  <button type="button" onClick={() => setCladeRoot(null)}>
+                    Unroot
+                  </button>
+                )}
               </form>
               {cladeMatches?.length > 0 && (
                 <ul className="tree-matches">
@@ -1077,24 +1125,6 @@ export default function Tree() {
                   ))}
                 </ul>
               )}
-              {cladeRoot && (
-                <div className="tree-row">
-                  <input
-                    value={newName}
-                    onChange={(event) => setNewName(event.target.value)}
-                    placeholder="Name"
-                  />
-                  <input
-                    lang="zh-CN"
-                    value={newZh}
-                    onChange={(event) => setNewZh(event.target.value)}
-                    placeholder="中文名"
-                  />
-                  <button type="button" disabled={busy} onClick={createTree}>
-                    Create
-                  </button>
-                </div>
-              )}
             </div>
           )}
 
@@ -1102,7 +1132,13 @@ export default function Tree() {
             <div className="tree-panel">
               <h2>This tree</h2>
               <p className="tree-panel-sub">
-                Rooted in <em>{data.root.name}</em>. Only species inside it can be added.
+                {data.root ? (
+                  <>
+                    Rooted in <em>{data.root.name}</em>. Only species inside it can be added.
+                  </>
+                ) : (
+                  'Unrooted: taxa of any rank can be added.'
+                )}{' '}
                 Names save when you leave the field.
               </p>
               <TreeNames

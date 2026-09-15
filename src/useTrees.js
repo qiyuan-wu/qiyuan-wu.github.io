@@ -5,9 +5,10 @@ import { auth, db, isOwner } from './firebase.js'
 import { SEED } from './tree/seed.js'
 
 // Every tree is one document in the `tree` collection. `global` is the main
-// tree; any other document is a focus tree rooted in a clade — Primates, say —
-// with its own species list, which may hold species the main tree never shows.
-// One subscription covers them all. Public read, owner-only write, enforced by
+// tree. Any other document is a tree of its own with its own tip list: either
+// rooted in a clade — Primates, say — so only members get in, or unrooted, so
+// its tips can be anything Open Tree knows, from a species to a whole domain
+// (Bacteria, Archaea, Fungi…). One subscription covers them all. Public read, owner-only write, enforced by
 // the Firestore rule.
 export function useTrees() {
   const [docs, setDocs] = useState({ global: SEED })
@@ -36,7 +37,7 @@ export function useTrees() {
   const focusTrees = useMemo(
     () =>
       Object.entries(docs)
-        .filter(([id, d]) => id !== 'global' && d.root)
+        .filter(([id, d]) => id !== 'global' && d.name)
         .map(([id, d]) => ({ id, ...d }))
         .sort((a, b) => a.name.localeCompare(b.name)),
     [docs],
