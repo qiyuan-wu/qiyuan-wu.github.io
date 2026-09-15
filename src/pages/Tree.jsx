@@ -528,6 +528,22 @@ export default function Tree() {
     if (!editing) setSelected(null)
   }, [editing])
 
+  // The "New tree" tab lives above the tree; the form that makes one sits at
+  // the bottom of the editor, on the main tree only. The tab gets you there.
+  const newTreeRef = useRef(null)
+  const [wantNewTree, setWantNewTree] = useState(false)
+  const openNewTree = () => {
+    setWantNewTree(true)
+    setEditing(true)
+    if (isFocus) navigate('/tree')
+  }
+  useEffect(() => {
+    if (!wantNewTree || !editing || isFocus || !newTreeRef.current) return
+    newTreeRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    newTreeRef.current.querySelector('input')?.focus({ preventScroll: true })
+    setWantNewTree(false)
+  }, [wantNewTree, editing, isFocus])
+
   const onNode = (node) => {
     if (editing && canEdit) {
       setSelected(node)
@@ -828,7 +844,7 @@ export default function Tree() {
         <h1>{title}</h1>
       </div>
 
-      {(focusTrees.length > 0 || isFocus) && (
+      {(focusTrees.length > 0 || isFocus || canEdit) && (
         <nav className="tree-tabs" aria-label={t('tree.title')}>
           <NavLink to="/tree" end>
             {t('tree.all')}
@@ -839,6 +855,11 @@ export default function Tree() {
               {treeName(f) !== f.root.name && <em>{f.root.name}</em>}
             </NavLink>
           ))}
+          {canEdit && (
+            <button type="button" className="tree-tab-new" onClick={openNewTree}>
+              New tree +
+            </button>
+          )}
         </nav>
       )}
 
@@ -1021,7 +1042,7 @@ export default function Tree() {
           />
 
           {!isFocus && (
-            <div className="tree-panel">
+            <div className="tree-panel" ref={newTreeRef}>
               <h2>New focus tree</h2>
               <p className="tree-panel-sub">
                 Rooted in a clade. It starts with whatever the main tree already

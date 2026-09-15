@@ -1722,7 +1722,7 @@ body.has-dialog {
 
 .bio {
   display: grid;
-  grid-template-columns: 168px 1fr;
+  grid-template-columns: 220px 1fr;
   gap: clamp(20px, 4vw, 40px);
   align-items: start;
   padding-bottom: clamp(28px, 4vw, 44px);
@@ -1730,7 +1730,7 @@ body.has-dialog {
 }
 
 .bio-photo {
-  width: 168px;
+  width: 220px;
   aspect-ratio: 1;
   object-fit: cover;
   border-radius: 16px;
@@ -1961,7 +1961,7 @@ body.has-dialog {
   }
 
   .bio-photo {
-    width: 128px;
+    width: 160px;
   }
 }
 
@@ -1996,7 +1996,8 @@ body.has-dialog {
   margin: -6px auto 22px;
 }
 
-.tree-tabs a {
+.tree-tabs a,
+.tree-tab-new {
   padding: 6px 13px;
   border: 1px solid transparent;
   border-radius: 999px;
@@ -2006,9 +2007,19 @@ body.has-dialog {
   transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 }
 
-.tree-tabs a:hover {
+.tree-tabs a:hover,
+.tree-tab-new:hover {
   color: var(--text);
   border-color: var(--border);
+}
+
+.tree-tab-new {
+  background: none;
+  border-style: dashed;
+  border-color: var(--border);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
 }
 
 .tree-tabs a.is-active {
