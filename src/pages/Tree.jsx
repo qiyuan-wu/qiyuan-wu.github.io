@@ -1039,6 +1039,13 @@ export default function Tree() {
 
           <div className="tree-panel">
             <h2>On the tree</h2>
+            <p className="tree-panel-sub">
+              The shape is Open Tree's answer for exactly these tips, stored at the
+              last change. Rebuild to ask again without changing the list.{' '}
+              <button type="button" className="tree-inline" disabled={busy || data.species.length < 2} onClick={() => applySpecies(data.species)}>
+                Rebuild from Open Tree
+              </button>
+            </p>
             <ul className="tree-species">
               {data.species.map((species) => (
                 <SpeciesRow

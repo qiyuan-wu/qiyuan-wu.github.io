@@ -36,15 +36,33 @@ export async function matchSpecies(query) {
 // The tree containing exactly these tips and nothing else. An ott id the
 // synthetic tree has never heard of fails the whole request, so drop those and
 // ask again rather than leaving the page with no tree at all.
+//
+// A taxon Open Tree does not consider a natural group — the genus Taraxacum,
+// say — comes back "broken": it is stood in for by its members' common
+// ancestor, and that tip is labelled `mrcaott320ott27859` rather than
+// `Taraxacum_ott524978`. The page keys tips by ott id, so such a tip would
+// draw blank. Relabel it with the id that was asked for. If that ancestor is
+// not a tip at all — because another tip on the tree sits inside it — the
+// taxon has nowhere to be drawn, and counts as dropped.
 export async function inducedNewick(ottIds) {
-  const ask = (ids) =>
-    post('/tree_of_life/induced_subtree', {
+  const ask = async (ids) => {
+    const data = await post('/tree_of_life/induced_subtree', {
       ott_ids: ids,
       label_format: 'name_and_id',
     })
+    let newick = data.newick
+    const dropped = []
+    for (const [key, standIn] of Object.entries(data.broken ?? {})) {
+      const ott = Number(key.replace(/^ott/, ''))
+      const leaf = new RegExp(`(?<=[(,])${standIn}(?=[,)])`)
+      if (leaf.test(newick)) newick = newick.replace(leaf, `broken_ott${ott}`)
+      else dropped.push(ott)
+    }
+    return { newick, dropped }
+  }
 
   try {
-    return { newick: (await ask(ottIds)).newick, dropped: [] }
+    return await ask(ottIds)
   } catch (error) {
     const unknown = Object.keys(error.data?.unknown ?? {}).map((key) =>
       Number(key.replace(/^ott/, '')),
@@ -52,7 +70,8 @@ export async function inducedNewick(ottIds) {
     if (!unknown.length) throw error
     const kept = ottIds.filter((id) => !unknown.includes(id))
     if (kept.length < 2) throw error
-    return { newick: (await ask(kept)).newick, dropped: unknown }
+    const result = await ask(kept)
+    return { ...result, dropped: [...unknown, ...result.dropped] }
   }
 }
 
