@@ -275,11 +275,51 @@ export const TRACKS = [
         ],
       },
       {
-        name: 'Computation & data',
+        name: 'Computation',
         courses: [
           { ref: 'ACM 210', after: ['ACM 106'], why: 'Numerical methods for PDEs. Alternate years.' },
-          { ref: 'ACM 154', after: ['ACM 106'], why: 'Inverse problems and data assimilation with Stuart — fits LCS from data.' },
-          { ref: 'ACM 216', why: 'Markov chains and stochastic processes; needs ACM 116.' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'data',
+    name: 'Probability & data-driven fluids',
+    tagline: 'Probability first, then stochastic processes, inference and learning — the footing for data-driven fluid mechanics.',
+    color: '#c6e07a',
+    stages: [
+      {
+        name: 'Foundation',
+        courses: [
+          { ref: 'ACM 116', why: 'Probability models with Zuev; the prerequisite nearly every course below names.' },
+          { ref: 'ACM 104', why: 'Linear algebra again — ACM 117, 118 and 170 all lean on it.' },
+        ],
+      },
+      {
+        name: 'Probability',
+        courses: [
+          { ref: 'ACM 117', after: ['ACM 116', 'ACM 104'], why: 'Rigorous probability for computational math: concentration, nonasymptotic bounds.' },
+          { ref: 'ACM 216', after: ['ACM 116'], why: 'Markov chains and stochastic processes with Owhadi — the language of SDEs and MCMC.' },
+          { ref: 'Ma 140', why: 'Measure-theoretic probability, three terms: martingales, Brownian motion. Wants Ma 108b.' },
+        ],
+      },
+      {
+        name: 'Inference & learning',
+        courses: [
+          { ref: 'IDS 157', after: ['ACM 116'], why: 'Statistical inference — estimation, testing, Bayesian methods.' },
+          { ref: 'ACM 118', after: ['ACM 116', 'ACM 117'], why: 'Gaussian processes and kernel methods with Owhadi; regression and learning of operators.' },
+          { ref: 'IDS 158', after: ['IDS 157'], why: 'Statistical learning fundamentals. Alternate years.' },
+          { ref: 'CS 155', why: 'Machine learning and data mining — the practical toolkit; on the controls core list.' },
+        ],
+      },
+      {
+        name: 'Data → fluids',
+        courses: [
+          { ref: 'ACM 154', after: ['ACM 116', 'IDS 157'], why: 'Inverse problems and data assimilation with Stuart — Kalman, ensemble and variational methods on PDEs.' },
+          { ref: 'ACM 206', after: ['ACM 116', 'ACM 117'], why: 'Monte Carlo and MCMC for Bayesian inference and rare events. Alternate years.' },
+          { ref: 'ACM 180', after: ['ACM 117'], why: 'Multiscale modeling: SDEs, Gaussian processes, homogenization. Alternate years.' },
+          { ref: 'ACM 217', after: ['ACM 117'], why: 'Random matrix theory — the math under POD/DMD-style decompositions. Alternate years.' },
+          { ref: 'EE 148', why: 'Deep learning from Perona; two terms, PyTorch in the second.' },
         ],
       },
     ],
