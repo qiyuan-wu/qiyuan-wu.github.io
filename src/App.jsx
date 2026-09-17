@@ -8,6 +8,7 @@ import Tree from './pages/Tree.jsx'
 import Projects from './pages/Projects.jsx'
 import Interests from './pages/Interests.jsx'
 import Guwen from './pages/Guwen.jsx'
+import Courses from './pages/Courses.jsx'
 import Admin from './pages/Admin.jsx'
 import NotFound from './pages/NotFound.jsx'
 import './App.css'
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="tree/:id" element={<Tree />} />
         <Route path="projects" element={<Projects />} />
         <Route path="guwen" element={<Guwen />} />
+        <Route path="courses" element={<Courses />} />
         <Route path="cv" element={<Navigate to="/" replace />} />
         <Route path="admin" element={<Admin />} />
         <Route path="*" element={<NotFound />} />

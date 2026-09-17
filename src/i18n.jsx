@@ -14,6 +14,7 @@ const STRINGS = {
     'nav.games': 'Games',
     'nav.soccer': 'Soccer',
     'nav.tree': 'Tree of Life',
+    'nav.courses': 'Courses',
     'nav.switch': '中',
     'nav.switchLabel': 'Switch to Chinese',
 
@@ -76,6 +77,7 @@ const STRINGS = {
     'nav.games': '游戏',
     'nav.soccer': '足球',
     'nav.tree': '生命之树',
+    'nav.courses': '课程',
     'nav.switch': 'EN',
     'nav.switchLabel': '切换到英文',
 

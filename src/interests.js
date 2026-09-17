@@ -4,6 +4,7 @@ export const INTERESTS = [
   { to: '/albums', label: 'nav.albums' },
   { to: '/tree', label: 'nav.tree' },
   { to: '/guwen', label: 'nav.guwen' },
+  { to: '/courses', label: 'nav.courses' },
   { to: '/games', label: 'nav.games' },
   { to: '/soccer', label: 'nav.soccer' },
   { to: '/projects', label: 'nav.projects' },
