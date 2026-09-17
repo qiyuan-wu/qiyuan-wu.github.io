@@ -2404,9 +2404,19 @@ body.has-dialog {
 }
 
 .courses-card-side {
+  grid-column: 1 / -1;
   display: flex;
-  align-items: flex-start;
-  padding: 10px 10px 0 0;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 0 14px 12px;
+}
+
+.courses-card-side:empty {
+  display: none;
+}
+
+.courses-card.is-open .courses-card-side {
+  order: 1;
 }
 
 .courses-status {

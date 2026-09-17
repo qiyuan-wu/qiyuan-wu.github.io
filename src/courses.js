@@ -108,9 +108,37 @@ export function findCourse(catalog, ref) {
   return catalog.find((c) => sameCourse(c, ref)) ?? null
 }
 
+// Caltech quotes units per term: "Ae 101 abc, 9 units" is three 9-unit
+// registrations. Each part is its own thing to take, so each is its own
+// entry — keyed "Ae/APh/CE/ME 101 a" — with the parent's units.
 export function unitsOf(course) {
-  const n = Number(course.units.match(/(\d+)\s*units?/i)?.[1] ?? 0)
-  return n * (course.parts || 1)
+  return Number(course.units.match(/(\d+)\s*units?/i)?.[1] ?? 0)
+}
+
+const TERM_WORDS = ['first', 'second', 'third']
+
+export function partsOf(course) {
+  const letters = course.label.match(/\s(abc|ab|bc|a|b|c)$/)?.[1]
+  if (!letters) return [{ id: course.key, part: '', term: termsOf(course) }]
+  const listed = termsOf(course)
+  return [...letters].map((p, i) => ({
+    id: `${course.key} ${p}`,
+    part: p,
+    // "first, second, third terms" lines up with a, b, c; otherwise unknown.
+    term: listed.length === letters.length ? [listed[i]] : listed,
+  }))
+}
+
+// Which terms a course runs, from the catalog's "first, third terms" phrasing.
+export function termsOf(course) {
+  const s = course.units.toLowerCase()
+  if (/each term/.test(s)) return ['FA', 'WI', 'SP']
+  const t = []
+  TERM_WORDS.forEach((w, i) => {
+    if (s.includes(w)) t.push(['FA', 'WI', 'SP'][i])
+  })
+  if (/summer/.test(s)) t.push('SU')
+  return t
 }
 
 // The tracks. `stages` run left to right; a course's `after` names the

@@ -2,25 +2,26 @@ import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDocumentTitle } from '../useDocumentTitle.js'
 import { useCourses, STATUSES } from '../useCourses.js'
-import { ALSO, DEGREE, TRACKS, bucketOf, findCourse, sameCourse, unitsOf } from '../courses.js'
+import { ALSO, DEGREE, TRACKS, bucketOf, findCourse, partsOf, sameCourse, unitsOf } from '../courses.js'
 
 const STATUS_LABEL = { want: 'want', taking: 'taking', done: 'done', skip: 'skip' }
 
-// Which terms a course runs, from the catalog's "first, third terms" phrasing.
-function termsOf(course) {
-  const s = course.units.toLowerCase()
-  const t = []
-  if (/first|each term/.test(s)) t.push('FA')
-  if (/second|each term/.test(s)) t.push('WI')
-  if (/third|each term/.test(s)) t.push('SP')
-  if (/summer/.test(s)) t.push('SU')
-  return t
-}
-
 export default function Courses() {
   useDocumentTitle('Courses · Qiyuan Wu')
-  const { catalog, plan, canEdit, setStatus, addToTrack, removeFromTrack } = useCourses()
+  const { catalog, plan: stored, canEdit, setStatus, addToTrack, removeFromTrack } = useCourses()
   const courses = catalog?.courses ?? []
+
+  // Statuses saved before parts existed sit under the whole course's key;
+  // read them as applying to every part until a part is marked on its own.
+  const plan = useMemo(() => {
+    const status = { ...stored.status }
+    for (const [key, value] of Object.entries(stored.status)) {
+      const course = courses.find((c) => c.key === key)
+      if (!course) continue
+      for (const part of partsOf(course)) if (!(part.id in status)) status[part.id] = value
+    }
+    return { ...stored, status }
+  }, [stored, courses])
 
   // Each track, with catalog entries attached, Firestore additions folded in
   // and removed courses dropped. A course I put on a track from the browser
@@ -60,11 +61,14 @@ export default function Courses() {
     for (const { course } of all) {
       if (seen.has(course.key)) continue
       seen.add(course.key)
-      const status = plan.status[course.key]
       const bucket = bucketOf(course)
-      if (!bucket || !sum[bucket] || !(status in sum[bucket])) continue
-      sum[bucket][status] += unitsOf(course)
-      sum[bucket].items.push({ course, status, units: unitsOf(course), bucket })
+      if (!bucket || !sum[bucket]) continue
+      for (const part of partsOf(course)) {
+        const status = plan.status[part.id]
+        if (!(status in sum[bucket])) continue
+        sum[bucket][status] += unitsOf(course)
+        sum[bucket].items.push({ course, part, status, units: unitsOf(course), bucket })
+      }
     }
     // Overflow past a bucket rolls into electives, as the option allows.
     for (const b of DEGREE.buckets) {
@@ -194,11 +198,15 @@ function Requirements({ progress }) {
               {[...progress[shown.id].items]
                 .sort((a, b) => order[a.status] - order[b.status])
                 .map((it, i) => (
-                  <li key={it.course?.key ?? i}>
+                  <li key={it.part?.id ?? i}>
                     <span className={`courses-status is-${it.status}`}>{STATUS_LABEL[it.status]}</span>
                     {it.course ? (
                       <>
-                        <span className="courses-card-num">{it.course.label}</span> {it.course.title}
+                        <span className="courses-card-num">
+                          {it.course.key}
+                          {it.part.part ? ` ${it.part.part}` : ''}
+                        </span>{' '}
+                        {it.course.title}
                       </>
                     ) : (
                       <span className="courses-dim">overflow from {it.from}</span>
@@ -215,8 +223,8 @@ function Requirements({ progress }) {
             </p>
           )}
           <p className="courses-dim">
-            Units are for the whole listed sequence — ME 101 abc is 27, one term of it 9. Anything
-            past a bucket’s cap spills into electives.
+            Each term of a sequence is its own registration: ME 101 a, b and c are 9 units apiece.
+            Anything past a bucket’s cap spills into electives.
           </p>
         </div>
       )}
@@ -243,8 +251,9 @@ function Track({ track, plan, canEdit, setStatus, remove }) {
   const [edges, setEdges] = useState([])
 
   const all = track.stages.flatMap((s) => s.courses)
-  const units = all.reduce((n, c) => n + unitsOf(c.course), 0)
-  const done = all.filter((c) => plan.status[c.course.key] === 'done').length
+  const parts = all.flatMap((c) => partsOf(c.course).map((p) => ({ ...p, course: c.course })))
+  const units = parts.reduce((n, p) => n + unitsOf(p.course), 0)
+  const done = parts.filter((p) => plan.status[p.id] === 'done').length
 
   // Arrows are drawn after layout from the cards' real positions, so they
   // survive wrapping, expansion and the phone layout alike.
@@ -290,7 +299,7 @@ function Track({ track, plan, canEdit, setStatus, remove }) {
         <h2>{track.name}</h2>
         <p>{track.tagline}</p>
         <span className="courses-track-meta">
-          {all.length} courses · {units} units · {done} done
+          {all.length} courses · {parts.length} terms · {units} units · {done} done
         </span>
       </header>
       <div className="courses-stages" ref={box}>
@@ -324,41 +333,65 @@ function Track({ track, plan, canEdit, setStatus, remove }) {
 function CourseCard({ item, plan, canEdit, setStatus, remove }) {
   const [open, setOpen] = useState(false)
   const { course, why } = item
-  const status = plan.status[course.key]
+  const parts = partsOf(course)
+  const statuses = parts.map((p) => plan.status[p.id])
   const bucket = bucketOf(course)
-  const terms = termsOf(course)
+  // The card takes the colour of its furthest-along part.
+  const lead = ['done', 'taking', 'want', 'skip'].find((s) => statuses.includes(s))
+  const units = unitsOf(course)
 
-  const cycle = () => {
+  const cycle = (part) => {
+    const status = plan.status[part.id]
     const i = STATUSES.indexOf(status)
-    setStatus(course.key, i === STATUSES.length - 1 ? null : STATUSES[i + 1])
+    setStatus(part.id, i === STATUSES.length - 1 ? null : STATUSES[i + 1])
+  }
+
+  const chip = (part) => {
+    const status = plan.status[part.id]
+    const label = part.part
+      ? `${part.part}${status ? ` · ${STATUS_LABEL[status]}` : ''}`
+      : status
+        ? STATUS_LABEL[status]
+        : 'mark'
+    return canEdit ? (
+      <button
+        type="button"
+        key={part.id}
+        className={`courses-status${status ? ` is-${status}` : ''}`}
+        title={part.term.join(' ')}
+        onClick={() => cycle(part)}
+      >
+        {label}
+      </button>
+    ) : (
+      status && (
+        <span key={part.id} className={`courses-status is-${status}`} title={part.term.join(' ')}>
+          {label}
+        </span>
+      )
+    )
   }
 
   return (
     <article
-      className={`courses-card${status ? ` is-${status}` : ''}${open ? ' is-open' : ''}${course.offered ? '' : ' is-off'}`}
+      className={`courses-card${lead ? ` is-${lead}` : ''}${open ? ' is-open' : ''}${course.offered ? '' : ' is-off'}`}
       data-key={course.key}
     >
       <button type="button" className="courses-card-main" onClick={() => setOpen((o) => !o)}>
         <span className="courses-card-num">{course.label}</span>
         <span className="courses-card-title">{course.title}</span>
         <span className="courses-card-meta">
-          {unitsOf(course)} units
-          {terms.length ? ` · ${terms.join(' ')}` : ''}
+          {units} units{parts.length > 1 ? ` × ${parts.length}` : ''}
+          {' · '}
+          {parts.length > 1
+            ? parts.map((p) => `${p.part}:${p.term.join('/') || '?'}`).join(' ')
+            : parts[0].term.join(' ')}
           {bucket && bucket !== 'hss' ? ` · ${DEGREE.buckets.find((b) => b.id === bucket)?.name.replace('ME core — ', '')}` : ''}
           {bucket === 'hss' ? ' · outside the 195' : ''}
           {!course.offered ? ' · not this year' : ''}
         </span>
         {why && <span className="courses-card-why">{why}</span>}
       </button>
-      <div className="courses-card-side">
-        {canEdit ? (
-          <button type="button" className={`courses-status${status ? ` is-${status}` : ''}`} onClick={cycle}>
-            {status ? STATUS_LABEL[status] : '·'}
-          </button>
-        ) : (
-          status && <span className={`courses-status is-${status}`}>{STATUS_LABEL[status]}</span>
-        )}
-      </div>
       {open && (
         <div className="courses-card-detail">
           <p>{course.desc}</p>
@@ -380,6 +413,7 @@ function CourseCard({ item, plan, canEdit, setStatus, remove }) {
           )}
         </div>
       )}
+      <div className="courses-card-side">{parts.map(chip)}</div>
     </article>
   )
 }
