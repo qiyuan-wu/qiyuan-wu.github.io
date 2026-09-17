@@ -58,7 +58,7 @@ export default function Courses() {
       seen.add(course.key)
       const status = plan.status[course.key]
       const bucket = bucketOf(course)
-      if (!bucket || !sum[bucket] || !sum[bucket][status]) continue
+      if (!bucket || !sum[bucket] || !(status in sum[bucket])) continue
       sum[bucket][status] += unitsOf(course)
     }
     // Overflow past a bucket rolls into electives, as the option allows.
