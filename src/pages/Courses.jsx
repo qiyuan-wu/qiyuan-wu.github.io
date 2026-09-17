@@ -48,10 +48,14 @@ export default function Courses() {
     [courses],
   )
 
-  // Units toward each bucket, by status. A course on two tracks counts once.
+  // Units toward each bucket, by status, and the courses behind each number.
+  // A course on two tracks counts once. Units are for the whole sequence:
+  // ME 101 abc is three terms, so 27.
   const progress = useMemo(() => {
     const seen = new Set()
-    const sum = Object.fromEntries(DEGREE.buckets.map((b) => [b.id, { done: 0, taking: 0, want: 0 }]))
+    const sum = Object.fromEntries(
+      DEGREE.buckets.map((b) => [b.id, { done: 0, taking: 0, want: 0, items: [] }]),
+    )
     const all = [...tracks.flatMap((t) => t.stages.flatMap((s) => s.courses)), ...also]
     for (const { course } of all) {
       if (seen.has(course.key)) continue
@@ -60,16 +64,19 @@ export default function Courses() {
       const bucket = bucketOf(course)
       if (!bucket || !sum[bucket] || !(status in sum[bucket])) continue
       sum[bucket][status] += unitsOf(course)
+      sum[bucket].items.push({ course, status, units: unitsOf(course), bucket })
     }
     // Overflow past a bucket rolls into electives, as the option allows.
     for (const b of DEGREE.buckets) {
       if (b.id === 'elective' || b.id === 'research' || b.id === 'seminar') continue
-      for (const k of ['done', 'taking', 'want']) {
-        const over = sum[b.id][k] - b.units
-        if (over > 0) {
-          sum[b.id][k] = b.units
-          sum.elective[k] += over
-        }
+      let over = sum[b.id].done + sum[b.id].taking + sum[b.id].want - b.units
+      if (over <= 0) continue
+      for (const k of ['want', 'taking', 'done']) {
+        const move = Math.min(over, sum[b.id][k])
+        sum[b.id][k] -= move
+        sum.elective[k] += move
+        over -= move
+        if (move) sum.elective.items.push({ from: b.name, status: k, units: move })
       }
     }
     return sum
@@ -129,6 +136,7 @@ export default function Courses() {
 }
 
 function Requirements({ progress }) {
+  const [open, setOpen] = useState(null)
   const totals = DEGREE.buckets.reduce(
     (acc, b) => {
       acc.done += progress[b.id].done
@@ -138,6 +146,8 @@ function Requirements({ progress }) {
     },
     { done: 0, taking: 0, want: 0 },
   )
+  const shown = open && DEGREE.buckets.find((b) => b.id === open)
+  const order = { done: 0, taking: 1, want: 2 }
   return (
     <section className="courses-req">
       <div className="courses-req-grid">
@@ -145,7 +155,12 @@ function Requirements({ progress }) {
           const p = progress[b.id]
           const pct = (n) => `${Math.min(100, (n / b.units) * 100)}%`
           return (
-            <div key={b.id} className="courses-req-item" title={b.rule}>
+            <button
+              type="button"
+              key={b.id}
+              className={`courses-req-item${open === b.id ? ' is-open' : ''}`}
+              onClick={() => setOpen(open === b.id ? null : b.id)}
+            >
               <div className="courses-req-head">
                 <span>{b.name}</span>
                 <span className="courses-req-n">
@@ -159,10 +174,53 @@ function Requirements({ progress }) {
                 <span className="is-done" style={{ width: pct(p.done) }} />
               </div>
               <p className="courses-req-rule">{b.rule}</p>
-            </div>
+            </button>
           )
         })}
       </div>
+
+      {shown && (
+        <div className="courses-req-detail">
+          <p>
+            <b>{shown.name}</b> — {shown.rule}{' '}
+            {progress[shown.id].want ? (
+              <span className="courses-dim">
+                {progress[shown.id].done + progress[shown.id].taking} counted, {progress[shown.id].want} more wanted.
+              </span>
+            ) : null}
+          </p>
+          {progress[shown.id].items.length ? (
+            <ul>
+              {[...progress[shown.id].items]
+                .sort((a, b) => order[a.status] - order[b.status])
+                .map((it, i) => (
+                  <li key={it.course?.key ?? i}>
+                    <span className={`courses-status is-${it.status}`}>{STATUS_LABEL[it.status]}</span>
+                    {it.course ? (
+                      <>
+                        <span className="courses-card-num">{it.course.label}</span> {it.course.title}
+                      </>
+                    ) : (
+                      <span className="courses-dim">overflow from {it.from}</span>
+                    )}
+                    <span className="courses-req-units">{it.units} u</span>
+                  </li>
+                ))}
+            </ul>
+          ) : (
+            <p className="courses-dim">
+              {shown.id === 'research'
+                ? 'Research units come from ME 200-type registrations; they are not tracked here.'
+                : 'Nothing marked yet. Statuses want, taking and done count; skip does not.'}
+            </p>
+          )}
+          <p className="courses-dim">
+            Units are for the whole listed sequence — ME 101 abc is 27, one term of it 9. Anything
+            past a bucket’s cap spills into electives.
+          </p>
+        </div>
+      )}
+
       <div className="courses-req-total">
         <span>
           <strong>{totals.done + totals.taking}</strong> of {DEGREE.total} units

@@ -2124,6 +2124,62 @@ body.has-dialog {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 14px 22px;
+  padding: 8px 10px;
+}
+
+.courses-req-item {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  margin: -8px -10px;
+  background: none;
+  border: 0;
+  border-radius: 10px;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.courses-req-item:hover,
+.courses-req-item.is-open {
+  background: var(--bg);
+}
+
+.courses-req-detail {
+  margin-top: 16px;
+  padding: 12px 14px;
+  background: var(--bg);
+  border-radius: 10px;
+  font-size: 0.88rem;
+}
+
+.courses-req-detail p {
+  margin: 0 0 8px;
+}
+
+.courses-req-detail ul {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.courses-req-detail li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.courses-req-detail .courses-card-num {
+  color: var(--accent);
+}
+
+.courses-req-units {
+  margin-left: auto;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
 }
 
 .courses-req-head {
