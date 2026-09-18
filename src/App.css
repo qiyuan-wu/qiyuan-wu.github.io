@@ -2432,12 +2432,21 @@ body.has-dialog {
   line-height: 1.4;
 }
 
-button.courses-status {
+select.courses-status {
   cursor: pointer;
   min-width: 30px;
+  appearance: none;
+  -webkit-appearance: none;
+  text-align: center;
 }
 
-button.courses-status:hover {
+select.courses-status option {
+  color: var(--text);
+  background: var(--bg);
+  text-decoration: none;
+}
+
+select.courses-status:hover {
   border-color: var(--track, var(--accent));
   color: var(--text);
 }

@@ -105,7 +105,7 @@ export default function Courses() {
         </p>
       </div>
 
-      <Requirements progress={progress} />
+      <Requirements progress={progress} canEdit={canEdit} setStatus={setStatus} />
 
       {tracks.map((t) => (
         <Track
@@ -139,7 +139,7 @@ export default function Courses() {
   )
 }
 
-function Requirements({ progress }) {
+function Requirements({ progress, canEdit, setStatus }) {
   const [open, setOpen] = useState(null)
   const totals = DEGREE.buckets.reduce(
     (acc, b) => {
@@ -199,7 +199,11 @@ function Requirements({ progress }) {
                 .sort((a, b) => order[a.status] - order[b.status])
                 .map((it, i) => (
                   <li key={it.part?.id ?? i}>
-                    <span className={`courses-status is-${it.status}`}>{STATUS_LABEL[it.status]}</span>
+                    {canEdit && it.part ? (
+                      <StatusPick status={it.status} onChange={(v) => setStatus(it.part.id, v)} />
+                    ) : (
+                      <span className={`courses-status is-${it.status}`}>{STATUS_LABEL[it.status]}</span>
+                    )}
                     {it.course ? (
                       <>
                         <span className="courses-card-num">
@@ -330,6 +334,26 @@ function Track({ track, plan, canEdit, setStatus, remove }) {
   )
 }
 
+// One status, picked outright — no cycling through the ones in between.
+function StatusPick({ status, prefix = '', title, onChange }) {
+  return (
+    <select
+      className={`courses-status${status ? ` is-${status}` : ''}`}
+      title={title}
+      value={status ?? ''}
+      onChange={(e) => onChange(e.target.value || null)}
+    >
+      <option value="">{prefix ? `${prefix} · mark` : 'mark'}</option>
+      {STATUSES.map((st) => (
+        <option key={st} value={st}>
+          {prefix ? `${prefix} · ` : ''}
+          {STATUS_LABEL[st]}
+        </option>
+      ))}
+    </select>
+  )
+}
+
 function CourseCard({ item, plan, canEdit, setStatus, remove }) {
   const [open, setOpen] = useState(false)
   const { course, why } = item
@@ -340,33 +364,21 @@ function CourseCard({ item, plan, canEdit, setStatus, remove }) {
   const lead = ['done', 'taking', 'want', 'skip'].find((s) => statuses.includes(s))
   const units = unitsOf(course)
 
-  const cycle = (part) => {
-    const status = plan.status[part.id]
-    const i = STATUSES.indexOf(status)
-    setStatus(part.id, i === STATUSES.length - 1 ? null : STATUSES[i + 1])
-  }
-
   const chip = (part) => {
     const status = plan.status[part.id]
-    const label = part.part
-      ? `${part.part}${status ? ` · ${STATUS_LABEL[status]}` : ''}`
-      : status
-        ? STATUS_LABEL[status]
-        : 'mark'
     return canEdit ? (
-      <button
-        type="button"
+      <StatusPick
         key={part.id}
-        className={`courses-status${status ? ` is-${status}` : ''}`}
+        status={status}
+        prefix={part.part}
         title={part.term.join(' ')}
-        onClick={() => cycle(part)}
-      >
-        {label}
-      </button>
+        onChange={(v) => setStatus(part.id, v)}
+      />
     ) : (
       status && (
         <span key={part.id} className={`courses-status is-${status}`} title={part.term.join(' ')}>
-          {label}
+          {part.part ? `${part.part} · ` : ''}
+          {STATUS_LABEL[status]}
         </span>
       )
     )
