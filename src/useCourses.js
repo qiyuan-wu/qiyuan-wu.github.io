@@ -9,8 +9,9 @@ import { auth, db, isOwner } from './firebase.js'
 //   added:  { [trackId]: [{ key, why }] }   courses put on a track from the browser
 //   removed: [courseKey]                    curated courses taken off
 //   schedule: { [termId]: [partId] }        the year planner; termId is "2026-FA"
+//   omitted: [partId]                       parts kept out of this year's planner
 // Public read, owner-only write, like everything else on the site.
-const EMPTY = { status: {}, added: {}, removed: [], schedule: {} }
+const EMPTY = { status: {}, added: {}, removed: [], schedule: {}, omitted: [] }
 
 export const STATUSES = ['want', 'taking', 'done', 'skip']
 
@@ -73,6 +74,8 @@ export function useCourses() {
   const setTerm = (termId, parts) =>
     save({ ...plan, schedule: { ...plan.schedule, [termId]: parts } })
 
+  const setOmitted = (omitted) => save({ ...plan, omitted })
+
   return {
     catalog,
     plan,
@@ -81,5 +84,6 @@ export function useCourses() {
     addToTrack,
     removeFromTrack,
     setTerm,
+    setOmitted,
   }
 }

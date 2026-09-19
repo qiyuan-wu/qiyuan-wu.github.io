@@ -20,7 +20,8 @@ const termId = (year, t) => `${year}-${t}`
 
 export default function YearPlan() {
   useDocumentTitle('Year plan · Qiyuan Wu')
-  const { catalog, plan, canEdit, setTerm } = useCourses()
+  const { catalog, plan, canEdit, setTerm, setOmitted } = useCourses()
+  const [showOmitted, setShowOmitted] = useState(false)
   const year = YEAR
   const [q, setQ] = useState('')
   const [onlyTracks, setOnlyTracks] = useState(true)
@@ -64,12 +65,26 @@ export default function YearPlan() {
   })
   const placed = new Set(Object.values(plan.schedule).flat())
 
+  const omitted = new Set(plan.omitted ?? [])
+  // Omitting part a of a sequence omits b and c with it: you can't take
+  // them without a. Restoring works the other way round.
+  const omit = (p) => {
+    const later = partsOf(p.course).filter((x) => x.part >= p.part).map((x) => x.id)
+    setOmitted([...new Set([...(plan.omitted ?? []), ...later])])
+  }
+  const restore = (p) => {
+    const earlier = partsOf(p.course).filter((x) => x.part <= p.part).map((x) => x.id)
+    setOmitted((plan.omitted ?? []).filter((id) => !earlier.includes(id)))
+  }
+  const omittedParts = parts.filter((p) => omitted.has(p.id))
+
   const words = q.toLowerCase().split(/\s+/).filter(Boolean)
   const candidates = useMemo(
     () =>
       parts
         .filter((p) => (onlyTracks ? p.listed : true))
         .filter((p) => p.status !== 'skip' && p.status !== 'done')
+        .filter((p) => !omitted.has(p.id))
         .filter((p) => {
           if (!words.length) return true
           const hay = `${p.course.label} ${p.course.title} ${p.course.desc}`.toLowerCase()
@@ -77,7 +92,7 @@ export default function YearPlan() {
         })
         .sort((a, b) => a.course.dept.localeCompare(b.course.dept) || a.course.number - b.course.number || a.part.localeCompare(b.part))
         .slice(0, onlyTracks && !words.length ? 500 : 60),
-    [parts, onlyTracks, words.join(' ')],
+    [parts, onlyTracks, words.join(' '), plan.omitted],
   )
 
   const add = (term, pid) => setTerm(term.id, [...(plan.schedule[term.id] ?? []), pid])
@@ -169,6 +184,9 @@ export default function YearPlan() {
                 </div>
                 {canEdit && (
                   <div className="yearplan-cand-side">
+                    <button type="button" className="is-omit" title="Not this year" onClick={() => omit(p)}>
+                      omit
+                    </button>
                     {columns.map((term) => {
                       const fits = p.term.includes(term.code) || !p.term.length
                       const here = (plan.schedule[term.id] ?? []).includes(p.id)
@@ -191,6 +209,36 @@ export default function YearPlan() {
           })}
           {!candidates.length && <p className="courses-hint">Nothing matches.</p>}
         </div>
+
+        {omittedParts.length > 0 && (
+          <div className="yearplan-omitted">
+            <button type="button" className="yearplan-toggle" onClick={() => setShowOmitted((o) => !o)}>
+              {showOmitted ? '▾' : '▸'} Omitted this year ({omittedParts.length})
+            </button>
+            {showOmitted && (
+              <div className="yearplan-candidates">
+                {omittedParts.map((p) => (
+                  <article key={p.id} className="yearplan-cand is-placed" style={p.track ? { '--track': p.track.color } : undefined}>
+                    <div className="yearplan-cand-main">
+                      <span className="courses-card-num">
+                        {p.course.key}
+                        {p.part ? ` ${p.part}` : ''}
+                      </span>
+                      <span className="courses-card-title">{p.course.title}</span>
+                    </div>
+                    {canEdit && (
+                      <div className="yearplan-cand-side">
+                        <button type="button" onClick={() => restore(p)}>
+                          restore
+                        </button>
+                      </div>
+                    )}
+                  </article>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </section>
     </section>
   )

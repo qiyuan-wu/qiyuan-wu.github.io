@@ -2743,6 +2743,29 @@ select.courses-status:hover {
   cursor: default;
 }
 
+.yearplan-cand-side button.is-omit {
+  margin-right: 6px;
+}
+
+.yearplan-omitted {
+  margin-top: 20px;
+}
+
+.yearplan-toggle {
+  margin-bottom: 10px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.yearplan-toggle:hover {
+  color: var(--text);
+}
+
 @media (max-width: 760px) {
   .yearplan-terms {
     grid-template-columns: 1fr;
