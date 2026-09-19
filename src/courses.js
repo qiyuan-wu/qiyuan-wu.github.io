@@ -121,12 +121,18 @@ export function partsOf(course) {
   const letters = course.label.match(/\s(abc|ab|bc|a|b|c)$/)?.[1]
   if (!letters) return [{ id: course.key, part: '', term: termsOf(course) }]
   const listed = termsOf(course)
-  return [...letters].map((p, i) => ({
-    id: `${course.key} ${p}`,
-    part: p,
-    // "first, second, third terms" lines up with a, b, c; otherwise unknown.
-    term: listed.length === letters.length ? [listed[i]] : listed,
-  }))
+  const ALL = ['FA', 'WI', 'SP']
+  return [...letters].map((p, i) => {
+    let term = listed
+    if (listed.length === letters.length) term = [listed[i]]
+    // "ab | first term" names only where it starts; the parts run in
+    // consecutive terms from there.
+    else if (listed.length && listed.length < letters.length) {
+      const start = ALL.indexOf(listed[0])
+      if (start >= 0 && start + letters.length <= ALL.length) term = [ALL[start + i]]
+    }
+    return { id: `${course.key} ${p}`, part: p, term }
+  })
 }
 
 // Which terms a course runs, from the catalog's "first, third terms" phrasing.
