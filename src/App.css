@@ -2743,6 +2743,17 @@ select.courses-status:hover {
   cursor: default;
 }
 
+.yearplan-time {
+  margin-top: 2px;
+  color: var(--text);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.yearplan-time.is-clash {
+  color: #ff9b85;
+}
+
 .yearplan-cand-side button.is-omit {
   margin-right: 6px;
 }

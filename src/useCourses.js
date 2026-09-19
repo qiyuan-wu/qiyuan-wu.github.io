@@ -17,6 +17,7 @@ export const STATUSES = ['want', 'taking', 'done', 'skip']
 
 export function useCourses() {
   const [catalog, setCatalog] = useState(null)
+  const [schedule, setSchedule] = useState(null)
   const [plan, setPlan] = useState(EMPTY)
   const [user, setUser] = useState(null)
 
@@ -27,6 +28,11 @@ export function useCourses() {
       .then((r) => r.json())
       .then((d) => setCatalog(d))
       .catch(() => setCatalog({ current: '', courses: [] }))
+    // The registrar's times, term by term, as each schedule is published.
+    fetch('/schedule.json')
+      .then((r) => r.json())
+      .then((d) => setSchedule(d))
+      .catch(() => setSchedule({ terms: {} }))
   }, [])
 
   useEffect(
@@ -78,6 +84,7 @@ export function useCourses() {
 
   return {
     catalog,
+    schedule,
     plan,
     canEdit: isOwner(user),
     setStatus,

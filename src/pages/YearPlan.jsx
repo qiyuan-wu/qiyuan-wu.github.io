@@ -18,9 +18,45 @@ const STATUS_LABEL = { want: 'want', taking: 'taking', done: 'done', skip: 'skip
 
 const termId = (year, t) => `${year}-${t}`
 
+// The registrar keys a course by whichever cross-listing it printed under;
+// match on number, part and a department in common.
+function sectionsFor(schedule, termCode, part) {
+  const table = schedule?.terms?.[termCode]
+  if (!table) return null
+  const want = part.part ? `${part.course.number} ${part.part}` : `${part.course.number}`
+  const depts = [part.course.key, ...(part.course.aliases ?? [])].flatMap((k) => k.split(' ')[0].split('/'))
+  for (const [id, list] of Object.entries(table)) {
+    const m = id.match(/^([A-Za-z/]+) (\d+)( [a-z])?$/)
+    if (!m) continue
+    const tail = `${m[2]}${m[3] ?? ''}`
+    if (tail !== want) continue
+    if (m[1].split('/').some((d) => depts.includes(d))) return list
+  }
+  return []
+}
+
+// "TR 14:30 - 15:55" -> [{ day: 'T', start: 870, end: 955 }, ...]
+function meetings(time) {
+  const m = time.match(/^([MTWRFS]+)\s+(\d\d):(\d\d)\s*-\s*(\d\d):(\d\d)/)
+  if (!m) return []
+  const start = Number(m[2]) * 60 + Number(m[3])
+  const end = Number(m[4]) * 60 + Number(m[5])
+  return [...m[1]].map((day) => ({ day, start, end }))
+}
+
+function clashes(a, b) {
+  return a.some((x) => b.some((y) => x.day === y.day && x.start < y.end && y.start < x.end))
+}
+
+function timeText(list) {
+  if (list === null) return 'schedule not out yet'
+  if (!list.length) return 'no time listed'
+  return list.map((x) => `${x.time}${x.location ? ` · ${x.location}` : ''}`).join(' / ')
+}
+
 export default function YearPlan() {
   useDocumentTitle('Year plan · Qiyuan Wu')
-  const { catalog, plan, canEdit, setTerm, setOmitted } = useCourses()
+  const { catalog, schedule, plan, canEdit, setTerm, setOmitted } = useCourses()
   const [showOmitted, setShowOmitted] = useState(false)
   const year = YEAR
   const [q, setQ] = useState('')
@@ -60,7 +96,17 @@ export default function YearPlan() {
 
   const columns = TERMS.map((t) => {
     const id = termId(year, t.id)
-    const items = (plan.schedule[id] ?? []).map((pid) => byId.get(pid)).filter(Boolean)
+    const items = (plan.schedule[id] ?? [])
+      .map((pid) => byId.get(pid))
+      .filter(Boolean)
+      .map((p) => ({ ...p, sections: sectionsFor(schedule, t.id, p) }))
+    // Two courses that meet at the same time on the same day.
+    for (const p of items) {
+      const mine = (p.sections ?? []).flatMap((x) => meetings(x.time))
+      p.clash = items
+        .filter((o) => o !== p && clashes(mine, (o.sections ?? []).flatMap((x) => meetings(x.time))))
+        .map((o) => `${o.course.key}${o.part ? ` ${o.part}` : ''}`)
+    }
     return { ...t, code: t.id, id, items, units: items.reduce((n, p) => n + unitsOf(p.course), 0) }
   })
   const placed = new Set(Object.values(plan.schedule).flat())
@@ -181,6 +227,14 @@ export default function YearPlan() {
                     {p.track ? ` · ${p.track.name}` : ''}
                     {p.status ? ` · ${STATUS_LABEL[p.status]}` : ''}
                   </span>
+                  {p.term.map((code) => {
+                    const list = sectionsFor(schedule, code, p)
+                    return list && list.length ? (
+                      <span key={code} className="yearplan-time">
+                        {code} · {list.map((x) => `${x.time}${x.instructor ? ` · ${x.instructor}` : ''}`).join(' / ')}
+                      </span>
+                    ) : null
+                  })}
                 </div>
                 {canEdit && (
                   <div className="yearplan-cand-side">
@@ -257,9 +311,14 @@ function PartCard({ part, canEdit, onRemove }) {
         <span className="courses-card-title">{course.title}</span>
         <span className="courses-card-meta">
           {unitsOf(course)} units{bucketLabel(course)}
-          {course.instructors ? ` · ${course.instructors}` : ''}
           {part.status ? ` · ${STATUS_LABEL[part.status]}` : ''}
         </span>
+        <span className={`yearplan-time${part.clash?.length ? ' is-clash' : ''}`}>
+          {timeText(part.sections)}
+          {part.sections?.[0]?.instructor ? ` · ${part.sections[0].instructor}` : ''}
+          {part.clash?.length ? ` — clashes with ${part.clash.join(', ')}` : ''}
+        </span>
+        {part.sections?.[0]?.note ? <span className="courses-dim">{part.sections[0].note}</span> : null}
       </button>
       {open && (
         <div className="courses-card-detail">
