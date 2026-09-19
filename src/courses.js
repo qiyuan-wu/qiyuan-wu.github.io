@@ -117,6 +117,17 @@ export function unitsOf(course) {
 
 const TERM_WORDS = ['first', 'second', 'third']
 
+// Most sequences build on themselves: no 101 b without 101 a. Seminars,
+// colloquia and anything the catalog says "may be taken independently"
+// don't, so their parts stand alone.
+export function partsIndependent(course) {
+  return (
+    unitsOf(course) <= 1 ||
+    /seminar|colloquium|lecture series/i.test(course.title) ||
+    /taken independent|independent of each other|any order|taken separately/i.test(course.desc)
+  )
+}
+
 export function partsOf(course) {
   const letters = course.label.match(/\s(abc|ab|bc|a|b|c)$/)?.[1]
   if (!letters) return [{ id: course.key, part: '', term: termsOf(course) }]

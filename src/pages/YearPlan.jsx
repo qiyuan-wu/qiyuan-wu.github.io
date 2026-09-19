@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDocumentTitle } from '../useDocumentTitle.js'
 import { useCourses } from '../useCourses.js'
-import { ALSO, DEGREE, TRACKS, bucketOf, findCourse, partsOf, unitsOf } from '../courses.js'
+import { ALSO, DEGREE, TRACKS, bucketOf, findCourse, partsIndependent, partsOf, unitsOf } from '../courses.js'
 
 // The coming year, term by term. The Courses page is every course of
 // interest across the PhD; this is which of them go where in the one year
@@ -92,13 +92,18 @@ export default function YearPlan() {
 
   const omitted = new Set(plan.omitted ?? [])
   // Omitting part a of a sequence omits b and c with it: you can't take
-  // them without a. Restoring works the other way round.
+  // them without a. Restoring works the other way round. Seminars and the
+  // like have no such chain, so only the one part moves.
   const omit = (p) => {
-    const later = partsOf(p.course).filter((x) => x.part >= p.part).map((x) => x.id)
+    const later = partsIndependent(p.course)
+      ? [p.id]
+      : partsOf(p.course).filter((x) => x.part >= p.part).map((x) => x.id)
     setOmitted([...new Set([...(plan.omitted ?? []), ...later])])
   }
   const restore = (p) => {
-    const earlier = partsOf(p.course).filter((x) => x.part <= p.part).map((x) => x.id)
+    const earlier = partsIndependent(p.course)
+      ? [p.id]
+      : partsOf(p.course).filter((x) => x.part <= p.part).map((x) => x.id)
     setOmitted((plan.omitted ?? []).filter((id) => !earlier.includes(id)))
   }
   const omittedParts = parts.filter((p) => omitted.has(p.id))
