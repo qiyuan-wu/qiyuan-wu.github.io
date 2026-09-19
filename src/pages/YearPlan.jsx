@@ -5,10 +5,10 @@ import { useCourses } from '../useCourses.js'
 import { ALSO, DEGREE, TRACKS, bucketOf, findCourse, partsOf, unitsOf } from '../courses.js'
 
 // The coming year, term by term. The Courses page is every course of
-// interest across the PhD; this is which of them go where in one year.
-// Only parts the catalog lists for a term can be put in that term.
-const FIRST_YEAR = 2026
-const YEARS = [0, 1, 2, 3].map((i) => FIRST_YEAR + i)
+// interest across the PhD; this is which of them go where in the one year
+// the catalog actually covers. Only courses offered this year are shown, and
+// only in the terms the catalog lists them for.
+const YEAR = 2026
 const TERMS = [
   { id: 'FA', name: 'Fall' },
   { id: 'WI', name: 'Winter' },
@@ -21,7 +21,7 @@ const termId = (year, t) => `${year}-${t}`
 export default function YearPlan() {
   useDocumentTitle('Year plan · Qiyuan Wu')
   const { catalog, plan, canEdit, setTerm } = useCourses()
-  const [year, setYear] = useState(FIRST_YEAR)
+  const year = YEAR
   const [q, setQ] = useState('')
   const [onlyTracks, setOnlyTracks] = useState(true)
   const courses = catalog?.courses ?? []
@@ -42,7 +42,9 @@ export default function YearPlan() {
       const course = findCourse(courses, c.ref)
       if (course) onTrack.set(course.key, null)
     }
-    return courses.flatMap((course) =>
+    return courses
+      .filter((course) => course.offered && course.years[0] === catalog?.current)
+      .flatMap((course) =>
       partsOf(course).map((p) => ({
         ...p,
         course,
@@ -51,7 +53,7 @@ export default function YearPlan() {
         status: plan.status[p.id],
       })),
     )
-  }, [courses, plan])
+  }, [courses, plan, catalog?.current])
 
   const byId = useMemo(() => new Map(parts.map((p) => [p.id, p])), [parts])
 
@@ -96,22 +98,10 @@ export default function YearPlan() {
         <p className="page-eyebrow">Caltech · Mechanical Engineering PhD</p>
         <h1>Year plan</h1>
         <p className="section-sub">
-          One year, three terms. <Link to="/courses">The courses page</Link> is everything of
-          interest across the PhD; this is what goes where in {year}–{String(year + 1).slice(2)}.
+          {year}–{String(year + 1).slice(2)}, three terms. <Link to="/courses">The courses page</Link>{' '}
+          is everything of interest across the PhD; this is what goes where this year, from the
+          courses the {catalog.current} catalog actually offers.
         </p>
-      </div>
-
-      <div className="yearplan-years">
-        {YEARS.map((y, i) => (
-          <button
-            type="button"
-            key={y}
-            className={y === year ? 'is-on' : ''}
-            onClick={() => setYear(y)}
-          >
-            Year {i + 1} <small>{y}–{String(y + 1).slice(2)}</small>
-          </button>
-        ))}
       </div>
 
       <div className="yearplan-terms">
@@ -143,7 +133,7 @@ export default function YearPlan() {
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Search the catalog or the shortlist…"
+            placeholder={`Search what ${catalog.current} offers…`}
           />
           <label>
             <input type="checkbox" checked={onlyTracks} onChange={(e) => setOnlyTracks(e.target.checked)} />
@@ -158,11 +148,10 @@ export default function YearPlan() {
         <div className="yearplan-candidates">
           {candidates.map((p) => {
             const isPlaced = placed.has(p.id)
-            const offeredThisYear = p.course.years[0] === catalog.current && p.course.offered
             return (
               <article
                 key={p.id}
-                className={`yearplan-cand${isPlaced ? ' is-placed' : ''}${offeredThisYear ? '' : ' is-off'}`}
+                className={`yearplan-cand${isPlaced ? ' is-placed' : ''}`}
                 style={p.track ? { '--track': p.track.color } : undefined}
               >
                 <div className="yearplan-cand-main">
@@ -175,7 +164,6 @@ export default function YearPlan() {
                     {unitsOf(p.course)} units · {p.term.join(' ') || 'term ?'}
                     {bucketLabel(p.course)}
                     {p.track ? ` · ${p.track.name}` : ''}
-                    {!offeredThisYear ? ` · not offered ${catalog.current}` : ''}
                     {p.status ? ` · ${STATUS_LABEL[p.status]}` : ''}
                   </span>
                 </div>
