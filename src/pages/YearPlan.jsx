@@ -65,7 +65,10 @@ export default function YearPlan() {
     return courses
       .filter((course) => course.offered && course.years[0] === catalog?.current)
       .flatMap((course) =>
-      partsOf(course).map((p) => ({
+      partsOf(course)
+        // "part b not offered 2026-27", says the description.
+        .filter((p) => !new RegExp(`part ${p.part} not offered`, 'i').test(course.desc))
+        .map((p) => ({
         ...p,
         course,
         track: onTrack.get(course.key),
@@ -246,13 +249,18 @@ export default function YearPlan() {
               <div className="yearplan-candidates">
                 {omittedParts.map((p) => (
                   <article key={p.id} className="yearplan-cand is-placed" style={p.track ? { '--track': p.track.color } : undefined}>
-                    <div className="yearplan-cand-main">
+                    <button
+                      type="button"
+                      className="yearplan-cand-main"
+                      onClick={() => setOpenId(openId === p.id ? null : p.id)}
+                    >
                       <span className="courses-card-num">
                         {p.course.key}
                         {p.part ? ` ${p.part}` : ''}
                       </span>
                       <span className="courses-card-title">{p.course.title}</span>
-                    </div>
+                    </button>
+                    {openId === p.id && <Detail part={p} schedule={schedule} />}
                     {canEdit && (
                       <div className="yearplan-cand-side">
                         <button type="button" onClick={() => restore(p)}>
@@ -320,7 +328,7 @@ function Detail({ part, schedule }) {
             {list === null
               ? 'Schedule not published yet.'
               : !list.length
-                ? 'No meeting time listed.'
+                ? `Not on the registrar’s ${code} schedule (yet).`
                 : list
                     .map((x) => `${x.time}${x.location ? ` · ${x.location}` : ''}${x.instructor ? ` · ${x.instructor}` : ''}${x.note ? ` (${x.note})` : ''}`)
                     .join(' / ')}
