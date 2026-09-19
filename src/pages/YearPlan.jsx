@@ -44,6 +44,7 @@ export default function YearPlan() {
   const year = YEAR
   const [q, setQ] = useState('')
   const [onlyTracks, setOnlyTracks] = useState(true)
+  const [termFilter, setTermFilter] = useState('')
   const courses = catalog?.courses ?? []
 
   // Every part of every course, with the course attached and whether it is
@@ -115,6 +116,7 @@ export default function YearPlan() {
         .filter((p) => (onlyTracks ? p.listed : true))
         .filter((p) => p.status !== 'skip' && p.status !== 'done')
         .filter((p) => !omitted.has(p.id))
+        .filter((p) => !termFilter || p.term.includes(termFilter))
         .filter((p) => {
           if (!words.length) return true
           const hay = `${p.course.label} ${p.course.title} ${p.course.desc}`.toLowerCase()
@@ -122,7 +124,7 @@ export default function YearPlan() {
         })
         .sort((a, b) => a.course.dept.localeCompare(b.course.dept) || a.course.number - b.course.number || a.part.localeCompare(b.part))
         .slice(0, onlyTracks && !words.length ? 500 : 60),
-    [parts, onlyTracks, words.join(' '), plan.omitted],
+    [parts, onlyTracks, words.join(' '), plan.omitted, termFilter],
   )
 
   const add = (term, pid) => setTerm(term.id, [...(plan.schedule[term.id] ?? []), pid])
@@ -184,6 +186,18 @@ export default function YearPlan() {
             <input type="checkbox" checked={onlyTracks} onChange={(e) => setOnlyTracks(e.target.checked)} />
             only courses on my tracks
           </label>
+          <div className="yearplan-termfilter" role="group" aria-label="Term">
+            {[{ id: '', name: 'Any term' }, ...TERMS].map((t) => (
+              <button
+                type="button"
+                key={t.id}
+                className={termFilter === t.id ? 'is-on' : ''}
+                onClick={() => setTermFilter(t.id)}
+              >
+                {t.name}
+              </button>
+            ))}
+          </div>
         </div>
         {!canEdit && (
           <p className="courses-hint">

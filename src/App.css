@@ -2767,6 +2767,32 @@ select.courses-status:hover {
   margin-right: 6px;
 }
 
+.yearplan-termfilter {
+  display: flex;
+  gap: 4px;
+}
+
+.yearplan-termfilter button {
+  padding: 6px 11px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 0.84rem;
+  cursor: pointer;
+}
+
+.yearplan-termfilter button:hover,
+.yearplan-termfilter button.is-on {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.yearplan-termfilter button.is-on {
+  background: var(--surface);
+}
+
 .yearplan-omitted {
   margin-top: 20px;
 }
