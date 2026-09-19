@@ -90,7 +90,7 @@ export default function YearPlan() {
       .map((p) => ({ ...p, sections: sectionsFor(schedule, t.id, p) }))
     // Alternatives sit together and count once, at the larger of their units.
     const groups = (plan.either?.[id] ?? [])
-      .map((g) => g.map((pid) => items.find((p) => p.id === pid)).filter(Boolean))
+      .map((g) => g.ids.map((pid) => items.find((p) => p.id === pid)).filter(Boolean))
       .filter((g) => g.length > 1)
     const grouped = new Set(groups.flat().map((p) => p.id))
     const blocks = [
@@ -149,7 +149,7 @@ export default function YearPlan() {
   const link = (term, pid) => {
     if (!linking) return setLinking(pid)
     if (linking === pid) return setLinking(null)
-    const groups = (plan.either?.[term.id] ?? []).map((g) => [...g])
+    const groups = (plan.either?.[term.id] ?? []).map((g) => [...g.ids])
     const a = groups.find((g) => g.includes(linking))
     const b = groups.find((g) => g.includes(pid))
     let next
@@ -158,10 +158,12 @@ export default function YearPlan() {
     else if (b) next = groups.map((g) => (g === b ? [...new Set([...g, linking])] : g))
     else next = [...groups, [linking, pid]]
     setLinking(null)
-    setEither(term.id, next)
+    setEither(term.id, next.map((ids) => ({ ids }))).catch((e) => alert(e.message))
   }
   const unlink = (term, pid) => {
-    const groups = (plan.either?.[term.id] ?? []).map((g) => g.filter((x) => x !== pid)).filter((g) => g.length > 1)
+    const groups = (plan.either?.[term.id] ?? [])
+      .map((g) => ({ ids: g.ids.filter((x) => x !== pid) }))
+      .filter((g) => g.ids.length > 1)
     setEither(term.id, groups)
   }
 

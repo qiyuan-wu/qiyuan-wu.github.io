@@ -10,7 +10,8 @@ import { auth, db, isOwner } from './firebase.js'
 //   removed: [courseKey]                    curated courses taken off
 //   schedule: { [termId]: [partId] }        the year planner; termId is "2026-FA"
 //   omitted: [partId]                       parts kept out of this year's planner
-//   either: { [termId]: [[partId, partId]] } courses I'm choosing between in a term
+//   either: { [termId]: [{ ids: [partId] }] } courses I'm choosing between in a term
+//   (Firestore has no nested arrays, hence the object)
 // Public read, owner-only write, like everything else on the site.
 const EMPTY = { status: {}, added: {}, removed: [], schedule: {}, omitted: [], either: {} }
 
