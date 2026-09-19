@@ -7,8 +7,8 @@
 // come from the newest year that has the course.
 import { writeFileSync } from 'node:fs'
 
-const CURRENT = '2025-26'
-const YEARS = ['2025-26', '2024-25', '2023-24', '2022-23']
+const CURRENT = '2026-27'
+const YEARS = ['2026-27', '2025-26', '2024-25', '2023-24', '2022-23']
 const BASE = 'https://catalog.caltech.edu'
 
 const urlFor = (year, dept) =>

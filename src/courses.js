@@ -32,7 +32,7 @@ export const DEGREE = {
       id: 'elective',
       name: 'Electives / minor',
       units: 54,
-      rule: 'Engineering or science, 101 or above; no seminars or research.',
+      rule: 'Engineering or science, 101 or above; no seminars or research. ACM 100 with adviser approval.',
     },
     {
       id: 'seminar',
@@ -66,7 +66,7 @@ export const CORE = {
     'Ae 221', 'ME 221', 'ME 223', 'ME 252', 'ME 266',
   ],
   controls: [
-    'ME 129', 'CDS 131', 'ME 133', 'ME 134', 'CDS 141', 'CS 155', 'ME 169', 'CDS 212',
+    'ME 129', 'CDS 131', 'ME 133', 'ME 134', 'CS 155', 'ME 169', 'CDS 212',
     'CDS 231', 'CDS 232', 'CDS 233', 'ME 234', 'ME 235',
   ],
 }
@@ -218,6 +218,7 @@ export const TRACKS = [
           { ref: 'CDS 245', after: ['CDS 131', 'CDS 232'], why: 'Data-driven control, neural certificates. Alternate years.' },
           { ref: 'CDS 242', after: ['CDS 231', 'CDS 232'], why: 'Hybrid systems — legged robots, switching.' },
           { ref: 'ME 234', why: 'Advanced robotics: planning. Wants ME 133 or equivalent.' },
+          { ref: 'CS 185', after: ['CDS 212'], why: 'New in 2026-27: RL and online learning, rigorously — bandits to policy optimization. Wants CS 155 and EE 181.' },
         ],
       },
     ],
@@ -347,7 +348,9 @@ export const TRACKS = [
           { ref: 'ACM 206', after: ['ACM 116', 'ACM 117'], why: 'Monte Carlo and MCMC for Bayesian inference and rare events. Alternate years.' },
           { ref: 'ACM 180', after: ['ACM 117'], why: 'Multiscale modeling: SDEs, Gaussian processes, homogenization. Alternate years.' },
           { ref: 'ACM 217', after: ['ACM 117'], why: 'Random matrix theory — the math under POD/DMD-style decompositions. Alternate years.' },
-          { ref: 'EE 148', why: 'Deep learning from Perona; two terms, PyTorch in the second.' },
+          { ref: 'EE 181', why: 'Deep learning (the old EE 148): transformers, optimization, data wrangling. Wants CS 155.' },
+          { ref: 'ME 295', after: ['ACM 116'], why: 'New in 2026-27: agentic AI for science — PINNs, neural operators as CFD surrogates, LLM agents driving simulations.' },
+          { ref: 'ME 296', after: ['ME 295'], why: 'Continues 295 into fluid and solid mechanics: neural-operator surrogates, diffusion models for inference and design.' },
         ],
       },
     ],
