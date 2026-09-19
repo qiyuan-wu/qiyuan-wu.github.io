@@ -13,7 +13,7 @@ const text = (h) =>
     .replace(/<[^>]+>/g, '')
     .replace(/&nbsp;/g, ' ')
     .replace(/&amp;/g, '&')
-    .replace(/&#39;/g, '’')
+    .replace(/&#39;|&#x27;/g, '’')
     .replace(/\s+/g, ' ')
     .trim()
 
