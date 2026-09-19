@@ -2587,3 +2587,164 @@ select.courses-status:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* ---- Year plan -------------------------------------------------------- */
+
+.courses-page .section-sub a {
+  color: var(--accent);
+}
+
+.yearplan-years {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 28px;
+}
+
+.yearplan-years button {
+  padding: 7px 14px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.yearplan-years button small {
+  color: var(--text-dim);
+  margin-left: 4px;
+}
+
+.yearplan-years button:hover,
+.yearplan-years button.is-on {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.yearplan-years button.is-on {
+  background: var(--surface);
+}
+
+.yearplan-terms {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 44px;
+}
+
+.yearplan-term {
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  min-height: 200px;
+}
+
+.yearplan-term header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+.yearplan-term h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.yearplan-units {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.yearplan-units small {
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+.yearplan-list {
+  display: grid;
+  gap: 8px;
+}
+
+.yearplan-term .courses-card {
+  background: var(--bg);
+}
+
+.yearplan-bucket {
+  margin: 12px 0 0;
+  color: var(--text-dim);
+  font-size: 0.78rem;
+}
+
+.yearplan-picker h2 {
+  margin: 0 0 4px;
+  font-size: 1.25rem;
+}
+
+.yearplan-candidates {
+  display: grid;
+  gap: 8px;
+}
+
+.yearplan-cand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--track, var(--border));
+  border-radius: 12px;
+}
+
+.yearplan-cand.is-placed {
+  opacity: 0.55;
+}
+
+.yearplan-cand.is-off .courses-card-title {
+  opacity: 0.7;
+}
+
+.yearplan-cand-main {
+  flex: 1 1 260px;
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.yearplan-cand-side {
+  display: flex;
+  gap: 4px;
+}
+
+.yearplan-cand-side button {
+  padding: 5px 9px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.yearplan-cand-side button:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.yearplan-cand-side button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+@media (max-width: 760px) {
+  .yearplan-terms {
+    grid-template-columns: 1fr;
+  }
+}

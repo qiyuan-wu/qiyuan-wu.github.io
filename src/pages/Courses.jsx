@@ -101,7 +101,8 @@ export default function Courses() {
         <h1>Courses</h1>
         <p className="section-sub">
           Routes through the catalog, one per interest. Arrows follow prerequisites; the
-          degree just has to be satisfied along the way.
+          degree just has to be satisfied along the way.{' '}
+          <Link to="/courses/plan">Plan a year →</Link>
         </p>
       </div>
 

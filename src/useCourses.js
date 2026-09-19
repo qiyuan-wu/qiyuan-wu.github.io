@@ -8,8 +8,9 @@ import { auth, db, isOwner } from './firebase.js'
 //   status: { [courseKey]: 'want' | 'taking' | 'done' | 'skip' }
 //   added:  { [trackId]: [{ key, why }] }   courses put on a track from the browser
 //   removed: [courseKey]                    curated courses taken off
+//   schedule: { [termId]: [partId] }        the year planner; termId is "2026-FA"
 // Public read, owner-only write, like everything else on the site.
-const EMPTY = { status: {}, added: {}, removed: [] }
+const EMPTY = { status: {}, added: {}, removed: [], schedule: {} }
 
 export const STATUSES = ['want', 'taking', 'done', 'skip']
 
@@ -69,6 +70,9 @@ export function useCourses() {
     return save({ ...plan, removed: [...new Set([...plan.removed, key])] })
   }
 
+  const setTerm = (termId, parts) =>
+    save({ ...plan, schedule: { ...plan.schedule, [termId]: parts } })
+
   return {
     catalog,
     plan,
@@ -76,5 +80,6 @@ export function useCourses() {
     setStatus,
     addToTrack,
     removeFromTrack,
+    setTerm,
   }
 }
