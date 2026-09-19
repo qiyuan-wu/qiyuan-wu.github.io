@@ -2788,6 +2788,15 @@ select.courses-status:hover {
   border-color: var(--rank);
 }
 
+.courses-card.is-link-target {
+  border-style: dashed;
+  cursor: pointer;
+}
+
+.courses-card.is-link-target:hover {
+  border-color: var(--rank);
+}
+
 .courses-remove.is-on {
   color: var(--text);
   border-color: var(--rank);

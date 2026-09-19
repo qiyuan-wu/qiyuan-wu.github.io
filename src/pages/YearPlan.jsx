@@ -206,6 +206,7 @@ export default function YearPlan() {
                         schedule={schedule}
                         canEdit={canEdit}
                         linking={linking === p.id}
+                        linkActive={linking !== null}
                         onRemove={() => drop(term, p.id)}
                         onLink={() => link(term, p.id)}
                         onUnlink={() => unlink(term, p.id)}
@@ -219,6 +220,7 @@ export default function YearPlan() {
                     schedule={schedule}
                     canEdit={canEdit}
                     linking={linking === b.items[0].id}
+                    linkActive={linking !== null}
                     onRemove={() => drop(term, b.items[0].id)}
                     onLink={() => link(term, b.items[0].id)}
                   />
@@ -358,12 +360,21 @@ export default function YearPlan() {
   )
 }
 
-function PartCard({ part, canEdit, onRemove, onLink, onUnlink, linking, schedule }) {
+function PartCard({ part, canEdit, onRemove, onLink, onUnlink, linking, linkActive, schedule }) {
   const [open, setOpen] = useState(false)
   const { course } = part
   return (
-    <article className={`courses-card${linking ? ' is-linking' : ''}`} style={part.track ? { '--track': part.track.color } : undefined}>
-      <button type="button" className="courses-card-main" onClick={() => setOpen((o) => !o)}>
+    <article
+      className={`courses-card${linking ? ' is-linking' : ''}${linkActive && !linking ? ' is-link-target' : ''}`}
+      style={part.track ? { '--track': part.track.color } : undefined}
+    >
+      <button
+        type="button"
+        className="courses-card-main"
+        title={linkActive && !linking ? 'Click to make this the alternative' : undefined}
+        // While an "or" is pending, a click on any other card completes it.
+        onClick={() => (linkActive && !linking && onLink ? onLink() : setOpen((o) => !o))}
+      >
         <span className="courses-card-num">
           {course.key}
           {part.part ? ` ${part.part}` : ''}
