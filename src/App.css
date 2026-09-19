@@ -2767,6 +2767,32 @@ select.courses-status:hover {
   margin-right: 6px;
 }
 
+.yearplan-either {
+  display: grid;
+  gap: 8px;
+  padding: 10px 10px 10px 14px;
+  border: 1px dashed var(--border);
+  border-left: 3px solid var(--rank);
+  border-radius: 12px;
+}
+
+.yearplan-either-label {
+  color: var(--rank);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.courses-card.is-linking {
+  border-color: var(--rank);
+}
+
+.courses-remove.is-on {
+  color: var(--text);
+  border-color: var(--rank);
+}
+
 .yearplan-termfilter {
   display: flex;
   gap: 4px;

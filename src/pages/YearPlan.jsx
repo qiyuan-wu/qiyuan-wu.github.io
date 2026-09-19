@@ -38,7 +38,8 @@ function sectionsFor(schedule, termCode, part) {
 
 export default function YearPlan() {
   useDocumentTitle('Year plan · Qiyuan Wu')
-  const { catalog, schedule, plan, canEdit, setTerm, setOmitted } = useCourses()
+  const { catalog, schedule, plan, canEdit, setTerm, setOmitted, setEither } = useCourses()
+  const [linking, setLinking] = useState(null) // partId whose "or" was clicked first
   const [showOmitted, setShowOmitted] = useState(false)
   const [openId, setOpenId] = useState(null)
   const year = YEAR
@@ -87,7 +88,17 @@ export default function YearPlan() {
       .map((pid) => byId.get(pid))
       .filter(Boolean)
       .map((p) => ({ ...p, sections: sectionsFor(schedule, t.id, p) }))
-    return { ...t, code: t.id, id, items, units: items.reduce((n, p) => n + unitsOf(p.course), 0) }
+    // Alternatives sit together and count once, at the larger of their units.
+    const groups = (plan.either?.[id] ?? [])
+      .map((g) => g.map((pid) => items.find((p) => p.id === pid)).filter(Boolean))
+      .filter((g) => g.length > 1)
+    const grouped = new Set(groups.flat().map((p) => p.id))
+    const blocks = [
+      ...groups.map((g) => ({ kind: 'either', key: g.map((p) => p.id).join('|'), items: g })),
+      ...items.filter((p) => !grouped.has(p.id)).map((p) => ({ kind: 'one', key: p.id, items: [p] })),
+    ]
+    const units = blocks.reduce((n, b) => n + Math.max(...b.items.map((p) => unitsOf(p.course))), 0)
+    return { ...t, code: t.id, id, items, blocks, units }
   })
   const placed = new Set(Object.values(plan.schedule).flat())
 
@@ -128,8 +139,31 @@ export default function YearPlan() {
   )
 
   const add = (term, pid) => setTerm(term.id, [...(plan.schedule[term.id] ?? []), pid])
-  const drop = (term, pid) =>
+  const drop = (term, pid) => {
+    unlink(term, pid)
     setTerm(term.id, (plan.schedule[term.id] ?? []).filter((x) => x !== pid))
+  }
+
+  // "or": click it on one course, then on another in the same term, and the
+  // two become alternatives. A third click joins an existing group.
+  const link = (term, pid) => {
+    if (!linking) return setLinking(pid)
+    if (linking === pid) return setLinking(null)
+    const groups = (plan.either?.[term.id] ?? []).map((g) => [...g])
+    const a = groups.find((g) => g.includes(linking))
+    const b = groups.find((g) => g.includes(pid))
+    let next
+    if (a && b && a !== b) next = [...groups.filter((g) => g !== a && g !== b), [...new Set([...a, ...b])]]
+    else if (a) next = groups.map((g) => (g === a ? [...new Set([...g, pid])] : g))
+    else if (b) next = groups.map((g) => (g === b ? [...new Set([...g, linking])] : g))
+    else next = [...groups, [linking, pid]]
+    setLinking(null)
+    setEither(term.id, next)
+  }
+  const unlink = (term, pid) => {
+    const groups = (plan.either?.[term.id] ?? []).map((g) => g.filter((x) => x !== pid)).filter((g) => g.length > 1)
+    setEither(term.id, groups)
+  }
 
   if (!catalog) {
     return (
@@ -161,9 +195,35 @@ export default function YearPlan() {
               </span>
             </header>
             <div className="yearplan-list">
-              {term.items.map((p) => (
-                <PartCard key={p.id} part={p} schedule={schedule} canEdit={canEdit} onRemove={() => drop(term, p.id)} />
-              ))}
+              {term.blocks.map((b) =>
+                b.kind === 'either' ? (
+                  <div key={b.key} className="yearplan-either">
+                    <span className="yearplan-either-label">one of</span>
+                    {b.items.map((p) => (
+                      <PartCard
+                        key={p.id}
+                        part={p}
+                        schedule={schedule}
+                        canEdit={canEdit}
+                        linking={linking === p.id}
+                        onRemove={() => drop(term, p.id)}
+                        onLink={() => link(term, p.id)}
+                        onUnlink={() => unlink(term, p.id)}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <PartCard
+                    key={b.key}
+                    part={b.items[0]}
+                    schedule={schedule}
+                    canEdit={canEdit}
+                    linking={linking === b.items[0].id}
+                    onRemove={() => drop(term, b.items[0].id)}
+                    onLink={() => link(term, b.items[0].id)}
+                  />
+                ),
+              )}
               {!term.items.length && <p className="courses-hint">Nothing yet.</p>}
             </div>
             <p className="yearplan-bucket">
@@ -298,11 +358,11 @@ export default function YearPlan() {
   )
 }
 
-function PartCard({ part, canEdit, onRemove, schedule }) {
+function PartCard({ part, canEdit, onRemove, onLink, onUnlink, linking, schedule }) {
   const [open, setOpen] = useState(false)
   const { course } = part
   return (
-    <article className="courses-card" style={part.track ? { '--track': part.track.color } : undefined}>
+    <article className={`courses-card${linking ? ' is-linking' : ''}`} style={part.track ? { '--track': part.track.color } : undefined}>
       <button type="button" className="courses-card-main" onClick={() => setOpen((o) => !o)}>
         <span className="courses-card-num">
           {course.key}
@@ -320,6 +380,20 @@ function PartCard({ part, canEdit, onRemove, schedule }) {
           <button type="button" className="courses-remove" onClick={onRemove}>
             Remove
           </button>
+          {onUnlink ? (
+            <button type="button" className="courses-remove" onClick={onUnlink}>
+              Unlink
+            </button>
+          ) : (
+            <button
+              type="button"
+              className={`courses-remove${linking ? ' is-on' : ''}`}
+              title="Choose between this and another course: click here, then the other one’s “or”"
+              onClick={onLink}
+            >
+              {linking ? 'or… pick the other' : 'or'}
+            </button>
+          )}
         </div>
       )}
     </article>
