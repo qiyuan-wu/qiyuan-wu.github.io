@@ -58,7 +58,7 @@ export default function YearPlan() {
   const columns = TERMS.map((t) => {
     const id = termId(year, t.id)
     const items = (plan.schedule[id] ?? []).map((pid) => byId.get(pid)).filter(Boolean)
-    return { ...t, id, items, units: items.reduce((n, p) => n + unitsOf(p.course), 0) }
+    return { ...t, code: t.id, id, items, units: items.reduce((n, p) => n + unitsOf(p.course), 0) }
   })
   const placed = new Set(Object.values(plan.schedule).flat())
 
@@ -182,7 +182,7 @@ export default function YearPlan() {
                 {canEdit && (
                   <div className="yearplan-cand-side">
                     {columns.map((term) => {
-                      const fits = p.term.includes(term.id) || !p.term.length
+                      const fits = p.term.includes(term.code) || !p.term.length
                       const here = (plan.schedule[term.id] ?? []).includes(p.id)
                       return (
                         <button
@@ -192,7 +192,7 @@ export default function YearPlan() {
                           title={fits ? `Add to ${term.name}` : `Not listed for ${term.name.toLowerCase()}`}
                           onClick={() => add(term, p.id)}
                         >
-                          {here ? '✓' : '+'} {term.id}
+                          {here ? '✓' : '+'} {term.code}
                         </button>
                       )
                     })}
