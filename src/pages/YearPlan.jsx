@@ -35,29 +35,12 @@ function sectionsFor(schedule, termCode, part) {
   return []
 }
 
-// "TR 14:30 - 15:55" -> [{ day: 'T', start: 870, end: 955 }, ...]
-function meetings(time) {
-  const m = time.match(/^([MTWRFS]+)\s+(\d\d):(\d\d)\s*-\s*(\d\d):(\d\d)/)
-  if (!m) return []
-  const start = Number(m[2]) * 60 + Number(m[3])
-  const end = Number(m[4]) * 60 + Number(m[5])
-  return [...m[1]].map((day) => ({ day, start, end }))
-}
-
-function clashes(a, b) {
-  return a.some((x) => b.some((y) => x.day === y.day && x.start < y.end && y.start < x.end))
-}
-
-function timeText(list) {
-  if (list === null) return 'schedule not out yet'
-  if (!list.length) return 'no time listed'
-  return list.map((x) => `${x.time}${x.location ? ` · ${x.location}` : ''}`).join(' / ')
-}
 
 export default function YearPlan() {
   useDocumentTitle('Year plan · Qiyuan Wu')
   const { catalog, schedule, plan, canEdit, setTerm, setOmitted } = useCourses()
   const [showOmitted, setShowOmitted] = useState(false)
+  const [openId, setOpenId] = useState(null)
   const year = YEAR
   const [q, setQ] = useState('')
   const [onlyTracks, setOnlyTracks] = useState(true)
@@ -100,13 +83,6 @@ export default function YearPlan() {
       .map((pid) => byId.get(pid))
       .filter(Boolean)
       .map((p) => ({ ...p, sections: sectionsFor(schedule, t.id, p) }))
-    // Two courses that meet at the same time on the same day.
-    for (const p of items) {
-      const mine = (p.sections ?? []).flatMap((x) => meetings(x.time))
-      p.clash = items
-        .filter((o) => o !== p && clashes(mine, (o.sections ?? []).flatMap((x) => meetings(x.time))))
-        .map((o) => `${o.course.key}${o.part ? ` ${o.part}` : ''}`)
-    }
     return { ...t, code: t.id, id, items, units: items.reduce((n, p) => n + unitsOf(p.course), 0) }
   })
   const placed = new Set(Object.values(plan.schedule).flat())
@@ -176,7 +152,7 @@ export default function YearPlan() {
             </header>
             <div className="yearplan-list">
               {term.items.map((p) => (
-                <PartCard key={p.id} part={p} term={term} canEdit={canEdit} onRemove={() => drop(term, p.id)} />
+                <PartCard key={p.id} part={p} schedule={schedule} canEdit={canEdit} onRemove={() => drop(term, p.id)} />
               ))}
               {!term.items.length && <p className="courses-hint">Nothing yet.</p>}
             </div>
@@ -215,7 +191,11 @@ export default function YearPlan() {
                 className={`yearplan-cand${isPlaced ? ' is-placed' : ''}`}
                 style={p.track ? { '--track': p.track.color } : undefined}
               >
-                <div className="yearplan-cand-main">
+                <button
+                  type="button"
+                  className="yearplan-cand-main"
+                  onClick={() => setOpenId(openId === p.id ? null : p.id)}
+                >
                   <span className="courses-card-num">
                     {p.course.key}
                     {p.part ? ` ${p.part}` : ''}
@@ -227,15 +207,8 @@ export default function YearPlan() {
                     {p.track ? ` · ${p.track.name}` : ''}
                     {p.status ? ` · ${STATUS_LABEL[p.status]}` : ''}
                   </span>
-                  {p.term.map((code) => {
-                    const list = sectionsFor(schedule, code, p)
-                    return list && list.length ? (
-                      <span key={code} className="yearplan-time">
-                        {code} · {list.map((x) => `${x.time}${x.instructor ? ` · ${x.instructor}` : ''}`).join(' / ')}
-                      </span>
-                    ) : null
-                  })}
-                </div>
+                </button>
+                {openId === p.id && <Detail part={p} schedule={schedule} />}
                 {canEdit && (
                   <div className="yearplan-cand-side">
                     <button type="button" className="is-omit" title="Not this year" onClick={() => omit(p)}>
@@ -298,7 +271,7 @@ export default function YearPlan() {
   )
 }
 
-function PartCard({ part, canEdit, onRemove }) {
+function PartCard({ part, canEdit, onRemove, schedule }) {
   const [open, setOpen] = useState(false)
   const { course } = part
   return (
@@ -313,23 +286,8 @@ function PartCard({ part, canEdit, onRemove }) {
           {unitsOf(course)} units{bucketLabel(course)}
           {part.status ? ` · ${STATUS_LABEL[part.status]}` : ''}
         </span>
-        <span className={`yearplan-time${part.clash?.length ? ' is-clash' : ''}`}>
-          {timeText(part.sections)}
-          {part.sections?.[0]?.instructor ? ` · ${part.sections[0].instructor}` : ''}
-          {part.clash?.length ? ` — clashes with ${part.clash.join(', ')}` : ''}
-        </span>
-        {part.sections?.[0]?.note ? <span className="courses-dim">{part.sections[0].note}</span> : null}
       </button>
-      {open && (
-        <div className="courses-card-detail">
-          <p>{course.desc}</p>
-          {course.prereq && (
-            <p>
-              <b>Prerequisites.</b> {course.prereq}
-            </p>
-          )}
-        </div>
-      )}
+      {open && <Detail part={part} schedule={schedule} />}
       {canEdit && (
         <div className="courses-card-side">
           <button type="button" className="courses-remove" onClick={onRemove}>
@@ -338,6 +296,38 @@ function PartCard({ part, canEdit, onRemove }) {
         </div>
       )}
     </article>
+  )
+}
+
+// What opens under a course: a short description, its prerequisites and,
+// for terms whose schedule the registrar has published, when it meets.
+function Detail({ part, schedule }) {
+  const { course } = part
+  const brief = course.desc.length > 320 ? course.desc.slice(0, course.desc.lastIndexOf(' ', 320)) + '…' : course.desc
+  return (
+    <div className="courses-card-detail yearplan-detail">
+      <p>{brief}</p>
+      {course.prereq && (
+        <p>
+          <b>Prerequisites.</b> {course.prereq}
+        </p>
+      )}
+      {part.term.map((code) => {
+        const list = sectionsFor(schedule, code, part)
+        return (
+          <p key={code} className="yearplan-time">
+            <b>{code}.</b>{' '}
+            {list === null
+              ? 'Schedule not published yet.'
+              : !list.length
+                ? 'No meeting time listed.'
+                : list
+                    .map((x) => `${x.time}${x.location ? ` · ${x.location}` : ''}${x.instructor ? ` · ${x.instructor}` : ''}${x.note ? ` (${x.note})` : ''}`)
+                    .join(' / ')}
+          </p>
+        )
+      })}
+    </div>
   )
 }
 
