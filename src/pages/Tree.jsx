@@ -74,18 +74,21 @@ function useNarrow() {
 }
 
 // Width of whatever element the ref is on, kept current as the window changes.
-function useWidth(ref) {
+// The canvas is not there on first render of a focus tree — Firestore has not
+// answered yet — so the observer must follow the element, not the mount. A
+// callback ref runs each time the canvas appears or goes away.
+function useWidth() {
   const [width, setWidth] = useState(0)
+  const [element, setElement] = useState(null)
   useEffect(() => {
-    const element = ref.current
     if (!element) return undefined
     const observer = new ResizeObserver(([entry]) =>
       setWidth(entry.contentRect.width),
     )
     observer.observe(element)
     return () => observer.disconnect()
-  }, [ref])
-  return width
+  }, [element])
+  return [width, setElement]
 }
 
 // A species I have actually met. The badge is right-aligned in the label
@@ -508,8 +511,7 @@ export default function Tree() {
   // takes every badge off every tree without touching the counts themselves.
   const inatUser = (docs.global?.inatUser ?? '').trim()
 
-  const canvasRef = useRef(null)
-  const available = useWidth(canvasRef)
+  const [available, canvasRef] = useWidth()
 
   const [collapsed, setCollapsed] = useState(() => new Set())
   const [editing, setEditing] = useState(false)
