@@ -10,6 +10,7 @@ import Interests from './pages/Interests.jsx'
 import Guwen from './pages/Guwen.jsx'
 import Courses from './pages/Courses.jsx'
 import YearPlan from './pages/YearPlan.jsx'
+import CoreCourses from './pages/CoreCourses.jsx'
 import Admin from './pages/Admin.jsx'
 import NotFound from './pages/NotFound.jsx'
 import './App.css'
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="guwen" element={<Guwen />} />
         <Route path="courses" element={<Courses />} />
         <Route path="courses/plan" element={<YearPlan />} />
+        <Route path="courses/core" element={<CoreCourses />} />
         <Route path="cv" element={<Navigate to="/" replace />} />
         <Route path="admin" element={<Admin />} />
         <Route path="*" element={<NotFound />} />

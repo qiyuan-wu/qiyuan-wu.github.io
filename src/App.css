@@ -2852,3 +2852,12 @@ select.courses-status:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* ---- ME core ---------------------------------------------------------- */
+
+.core-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 10px;
+  align-items: start;
+}
