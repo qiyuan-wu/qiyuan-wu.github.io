@@ -2,7 +2,8 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { INTERESTS, isInterestPath } from './interests.js'
 import { useLanguage } from './i18n.jsx'
 
-// The nav is two entries: the front page (bio, CV, research) and Interests.
+// The nav is three entries: the front page (bio, CV, research), Interests,
+// and the blog.
 // Inside one of the interest pages a second row lists them all, so hopping
 // between 古文 and the albums is still one click. The hub itself has the
 // boxes and needs no row.
@@ -24,6 +25,7 @@ export default function Layout() {
           <NavLink to="/interests" className={inInterests ? 'active' : undefined}>
             {t('nav.interests')}
           </NavLink>
+          <NavLink to="/blog">{t('nav.blog')}</NavLink>
           <button
             type="button"
             className="lang-toggle"

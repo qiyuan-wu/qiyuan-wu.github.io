@@ -2861,3 +2861,133 @@ select.courses-status:hover {
   gap: 10px;
   align-items: start;
 }
+
+/* ---- Blog ------------------------------------------------------------- */
+
+.blog,
+.blog-post {
+  max-width: 720px;
+}
+
+.blog-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.blog-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 18px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.blog-list time {
+  min-width: 11em;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.blog-list a {
+  color: var(--text);
+  font-size: 1.08rem;
+  text-decoration: none;
+}
+
+.blog-list a:hover {
+  color: var(--accent);
+}
+
+.blog-draft {
+  padding: 1px 8px;
+  border: 1px dashed var(--rank);
+  border-radius: 999px;
+  color: var(--rank);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.blog-post header {
+  margin-bottom: clamp(24px, 4vw, 40px);
+}
+
+.blog-post header h1 {
+  margin: 18px 0 6px;
+  font-size: clamp(1.7rem, 4vw, 2.4rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.blog-post header time {
+  margin-right: 10px;
+  color: var(--text-dim);
+}
+
+.blog-back {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.blog-back:hover {
+  color: var(--accent);
+}
+
+.blog-body {
+  font-size: 1.06rem;
+  line-height: 1.75;
+}
+
+.blog-body h2,
+.blog-body h3 {
+  margin: 2em 0 0.5em;
+  line-height: 1.25;
+}
+
+.blog-body a {
+  color: var(--accent);
+}
+
+.blog-body img {
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+.blog-body blockquote {
+  margin: 1.2em 0;
+  padding: 0 0 0 1em;
+  border-left: 3px solid var(--border);
+  color: var(--text-dim);
+}
+
+.blog-body code {
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: var(--surface);
+  font-size: 0.9em;
+}
+
+.blog-body pre {
+  overflow-x: auto;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  line-height: 1.5;
+}
+
+.blog-body pre code {
+  padding: 0;
+  background: none;
+}
+
+/* Wide equations scroll on their own instead of pushing the page sideways. */
+.blog-body .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 0;
+}

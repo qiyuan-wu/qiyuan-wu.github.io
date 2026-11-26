@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Layout from './Layout.jsx'
 import Home from './pages/Home.jsx'
@@ -15,12 +16,18 @@ import Admin from './pages/Admin.jsx'
 import NotFound from './pages/NotFound.jsx'
 import './App.css'
 
+// The blog brings Markdown and KaTeX along; load it only when someone opens it.
+const Blog = lazy(() => import('./pages/Blog.jsx'))
+const Post = lazy(() => import('./pages/Post.jsx'))
+
 export default function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="interests" element={<Interests />} />
+        <Route path="blog" element={<Suspense><Blog /></Suspense>} />
+        <Route path="blog/:slug" element={<Suspense><Post /></Suspense>} />
         <Route path="games" element={<Games />} />
         <Route path="soccer" element={<Soccer />} />
         <Route path="albums" element={<Albums />} />

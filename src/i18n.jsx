@@ -15,6 +15,7 @@ const STRINGS = {
     'nav.soccer': 'Soccer',
     'nav.tree': 'Tree of Life',
     'nav.courses': 'Courses',
+    'nav.blog': 'Blog',
     'nav.switch': '中',
     'nav.switchLabel': 'Switch to Chinese',
 
@@ -64,6 +65,11 @@ const STRINGS = {
     'tree.missing': 'No such tree.',
     'tree.empty': 'Two species is the minimum for a tree. There are {n} so far.',
 
+    'blog.title': 'Blog',
+    'blog.empty': 'Nothing here yet.',
+    'blog.draft': 'draft',
+    'blog.back': '← All posts',
+
     'notfound.title': 'Not found',
     'notfound.back': 'Back home →',
   },
@@ -78,6 +84,7 @@ const STRINGS = {
     'nav.soccer': '足球',
     'nav.tree': '生命之树',
     'nav.courses': '课程',
+    'nav.blog': '随笔',
     'nav.switch': 'EN',
     'nav.switchLabel': '切换到英文',
 
@@ -126,6 +133,11 @@ const STRINGS = {
     'tree.all': '全部',
     'tree.missing': '没有这棵树。',
     'tree.empty': '至少要两个物种才能成树，目前有 {n} 个。',
+
+    'blog.title': '随笔',
+    'blog.empty': '还没有文章。',
+    'blog.draft': '草稿',
+    'blog.back': '← 全部文章',
 
     'notfound.title': '页面不存在',
     'notfound.back': '返回首页 →',
